@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Test Login</title>
+<script>
+window.onload = function() {
+  // Simular lo que hace index.html: poner credenciales y llamar doSignin
+  // Redirigir a index con parametro de auto-login via localStorage
+  localStorage.setItem('jersey_autologin_phone','3343745531');
+  localStorage.setItem('jersey_autologin_pass','125670Carlos');
+  window.location.href = 'index.html';
+};
+</script>
+</head>
+<body style="background:#1a1a2e;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh">
+<div>Iniciando sesión...</div>
+</body>
+</html>
