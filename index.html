@@ -462,8 +462,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
     <!-- Tabs -->
     <div class="login-tabs">
-      <button class="login-tab active" id="tab-signin" id="tab-btn-signin">Iniciar sesión</button>
-      <button class="login-tab" id="tab-register" id="tab-btn-register">Registrarse</button>
+      <button class="login-tab active" id="tab-signin" id="tab-btn-signin" onclick="switchLoginTab('signin')">Iniciar sesión</button>
+      <button class="login-tab" id="tab-register" id="tab-btn-register" onclick="switchLoginTab('register')">Registrarse</button>
     </div>
 
     <!-- INICIAR SESIÓN -->
@@ -478,7 +478,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"/>
         </div>
         <div class="login-error" id="si-error"></div>
-        <button type="button" class="login-btn" id="btn-signin">Iniciar sesión →</button>
+        <button type="button" class="login-btn" id="btn-signin" onclick="this.disabled=true;doSignin();this.disabled=false;">Iniciar sesión →</button>
       </div>
       <div style="margin-top:14px;text-align:center">
         <a href="#" onclick="resetMyAccount();return false" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
