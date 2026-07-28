@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Diagnóstico</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body{background:#1a1a2e;color:#fff;font-family:sans-serif;padding:20px;max-width:400px;margin:auto}
+input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #555;background:#2a2a4e;color:#fff;font-size:16px;box-sizing:border-box}
+button{width:100%;padding:14px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;margin-top:8px}
+#result{margin-top:16px;padding:12px;border-radius:8px;background:#2a2a4e;min-height:40px;font-size:14px;word-break:break-all}
+</style>
+</head>
+<body>
+<h2>🔧 Diagnóstico Login</h2>
+<p>Escribe tu teléfono y contraseña, luego presiona el botón:</p>
+<input type="tel" id="phone" placeholder="Teléfono (ej: 3343745531)">
+<input type="password" id="pass" placeholder="Contraseña">
+<button onclick="probar()">PROBAR AHORA</button>
+<div id="result">Esperando...</div>
+
+<script>
+var ADMIN_PHONE = '3343745531';
+var ADMIN_PASS  = '125670Carlos';
+
+function probar() {
+  var r = document.getElementById('result');
+  var phone = document.getElementById('phone').value.trim().replace(/\D/g,'');
+  var pass  = document.getElementById('pass').value;
+  r.innerHTML = 'Datos: teléfono=' + phone + ' ('+phone.length+' digs), pass='+pass.length+' chars<br>';
+  if (phone === ADMIN_PHONE && pass === ADMIN_PASS) {
+    r.innerHTML += '<strong style="color:#2ecc71">✅ ADMIN CORRECTO — el login funciona</strong>';
+  } else if (phone === ADMIN_PHONE) {
+    r.innerHTML += '<span style="color:#f39c12">⚠️ Teléfono admin OK pero contraseña incorrecta</span>';
+  } else {
+    r.innerHTML += '<span style="color:#e74c3c">❌ Teléfono no es admin. Esperado: '+ADMIN_PHONE+'</span>';
+  }
+}
+
+document.getElementById('pass').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') probar();
+});
+</script>
+</body></html>
