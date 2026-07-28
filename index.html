@@ -945,7 +945,8 @@ function switchLoginTab(tab) {
   document.getElementById('panel-register').style.display = tab==='register' ? '' : 'none';
 }
 
-function doSignin() { console.log("doSignin called"); alert("doSignin ejecutado!");
+function doSignin() {
+  try { console.log("doSignin called"); alert("doSignin ejecutado!");
   const phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
   const pass  = document.getElementById('si-pass').value;
   const errEl = document.getElementById('si-error');
@@ -981,6 +982,7 @@ function doSignin() { console.log("doSignin called"); alert("doSignin ejecutado!
   existing.logins = (existing.logins||0)+1;
   saveUsers(users);
   finishLogin(existing);
+} catch(e) { console.error("doSignin error:", e); document.getElementById("si-error").textContent = "Error: " + e.message; }
 }
 
 function doRegister() {
