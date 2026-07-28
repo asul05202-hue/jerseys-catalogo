@@ -129,15 +129,19 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-h
     <button class="tab-btn" onclick="showTab('reg')">Registrarme</button>
   </div>
   <div id="tab-login">
-    <div class="field"><label>TELEFONO</label><input type="tel" id="lph" placeholder="10 digitos" maxlength="10"></div>
-    <div class="field"><label>CONTRASENA</label><input type="password" id="lps" placeholder="..." onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <button class="btn-main" onclick="doLogin()">Entrar al catalogo</button>
+    <form onsubmit="doLogin();return false;" style="margin:0">
+    <div class="field"><label>TELEFONO</label><input type="tel" id="lph" placeholder="10 digitos" maxlength="10" autocomplete="username"></div>
+    <div class="field"><label>CONTRASENA</label><input type="password" id="lps" placeholder="..." autocomplete="current-password"></div>
+    <button type="submit" class="btn-main">Entrar al catalogo</button>
+    </form>
   </div>
   <div id="tab-reg" style="display:none">
-    <div class="field"><label>NOMBRE COMPLETO</label><input type="text" id="rn" placeholder="Tu nombre"></div>
-    <div class="field"><label>TELEFONO</label><input type="tel" id="rph" placeholder="10 digitos" maxlength="10"></div>
-    <div class="field"><label>CONTRASENA</label><input type="password" id="rps" placeholder="Minimo 4 caracteres"></div>
-    <button class="btn-main" onclick="doRegister()">Crear cuenta</button>
+    <form onsubmit="doRegister();return false;" style="margin:0">
+    <div class="field"><label>NOMBRE COMPLETO</label><input type="text" id="rn" placeholder="Tu nombre" autocomplete="name"></div>
+    <div class="field"><label>TELEFONO</label><input type="tel" id="rph" placeholder="10 digitos" maxlength="10" autocomplete="username"></div>
+    <div class="field"><label>CONTRASENA</label><input type="password" id="rps" placeholder="Minimo 4 caracteres" autocomplete="new-password"></div>
+    <button type="submit" class="btn-main">Crear cuenta</button>
+    </form>
   </div>
   <div id="login-err"></div>
 </div>
