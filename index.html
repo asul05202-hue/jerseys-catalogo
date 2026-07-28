@@ -2125,7 +2125,8 @@ document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if
       }
       if (ok) {
         document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app').style.display = '';
+        document.getElementById('app').classList.add('visible');
+        if (typeof initApp === 'function') { try { initApp(); } catch(e) { console.error('initApp:', e); } }
         if (typeof window.onUserLoggedIn === 'function') window.onUserLoggedIn(u);
         return;
       }
