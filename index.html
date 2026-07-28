@@ -946,43 +946,42 @@ function switchLoginTab(tab) {
 }
 
 function doSignin() {
-  try { console.log("doSignin called"); alert("doSignin ejecutado!");
-  const phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
-  const pass  = document.getElementById('si-pass').value;
-  const errEl = document.getElementById('si-error');
-  errEl.textContent = '';
-
-  if (!phone || phone.length < 7) { errEl.textContent = 'Número de teléfono no válido.'; return; }
-  if (!pass || pass.length < 4)   { errEl.textContent = 'La contraseña debe tener al menos 4 caracteres.'; return; }
-
-  // Admin
-  if (phone === ADMIN_PHONE) {
-    if (pass !== ADMIN_PASS) { errEl.textContent = 'Contraseña incorrecta.'; document.getElementById('si-pass').value=''; return; }
-    const users = loadUsers();
-    let adm = users.find(u => u.phone === phone);
-    if (!adm) {
-      adm = { id:Date.now(), name:ADMIN_NAME, phone, passHash:btoa(pass), datetime:new Date().toISOString(), lastLogin:new Date().toISOString(), logins:1 };
-      users.unshift(adm);
-    } else {
-      adm.lastLogin = new Date().toISOString();
-      adm.logins = (adm.logins||0)+1;
+  console.log("doSignin v4");
+  var errEl = document.getElementById('si-error');
+  errEl.textContent = 'procesando...';
+  try {
+    var phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
+    var pass  = document.getElementById('si-pass').value;
+    errEl.textContent = 'phone:'+phone+' pass:'+pass.length+'chars seed:'+(window.CATALOG_SEED?window.CATALOG_SEED.length:'NO');
+    if (!phone || phone.length < 7) { errEl.textContent = 'Numero invalido'; return; }
+    if (!pass || pass.length < 4)   { errEl.textContent = 'Pass muy corta'; return; }
+    if (phone === ADMIN_PHONE) {
+      if (pass !== ADMIN_PASS) { errEl.textContent = 'Pass incorrecta'; return; }
+      var users = loadUsers();
+      var adm = users.find(function(u){ return u.phone === phone; });
+      if (!adm) {
+        adm = { id:Date.now(), name:ADMIN_NAME, phone:phone, passHash:btoa(pass), datetime:new Date().toISOString(), logins:0 };
+        users.unshift(adm);
+      } else {
+        adm.lastLogin = new Date().toISOString();
+        adm.logins = (adm.logins||0)+1;
+      }
+      saveUsers(users);
+      finishLogin(adm);
+      return;
     }
+    var users = loadUsers();
+    var existing = users.find(function(u){ return u.phone === phone; });
+    if (!existing) { errEl.textContent = 'No registrado. Usa Registrarse'; return; }
+    if (existing.passHash && existing.passHash !== btoa(pass)) { errEl.textContent = 'Pass incorrecta'; document.getElementById('si-pass').value=''; return; }
+    existing.lastLogin = new Date().toISOString();
+    existing.logins = (existing.logins||0)+1;
     saveUsers(users);
-    finishLogin(adm);
-    return;
+    finishLogin(existing);
+  } catch(e) {
+    console.error('doSignin ERROR:', e);
+    errEl.textContent = 'ERROR: ' + e.message;
   }
-
-  const users = loadUsers();
-  const existing = users.find(u => u.phone === phone);
-  if (!existing) { errEl.textContent = 'Teléfono no registrado. Usa la pestaña Registrarse.'; return; }
-  if (existing.passHash && existing.passHash !== btoa(pass)) {
-    errEl.textContent = 'Contraseña incorrecta.'; document.getElementById('si-pass').value=''; return;
-  }
-  existing.lastLogin = new Date().toISOString();
-  existing.logins = (existing.logins||0)+1;
-  saveUsers(users);
-  finishLogin(existing);
-} catch(e) { console.error("doSignin error:", e); document.getElementById("si-error").textContent = "Error: " + e.message; }
 }
 
 function doRegister() {
