@@ -418,7 +418,7 @@ function renderCatalog(){
         '<div class="card-btns">'+
           '<a class="btn-ver" href="'+it.url+'" target="_blank" rel="noopener">Ver catalogo</a>'+
           '<a class="btn-wa" href="https://wa.me/'+WA_NUMBER+'?text='+waMsg+'" target="_blank" rel="noopener">&#128172;</a>'+
-          '<button class="btn-review" onclick="openReview(''+it.name.replace(/'/g,'')+'')">&#11088;</button>'+
+          "<button class=\"btn-review\" onclick=\"openReview('"+it.name.replace(/'/g,'')+"')\">&#11088;</button>"+
         '</div>'+
       '</div>';
     });
@@ -515,7 +515,7 @@ function renderAdminUsers(){
         '<div class="as">Tel: '+ph+' | Registro: '+fecha+'</div>'+
         '<div class="ap">Pass: '+u.pass+'</div>'+
       '</div>'+
-      '<button class="btn-del" onclick="deleteUser(''+ph+'')">Eliminar</button>'+
+      "<button class=\"btn-del\" onclick=\"deleteUser('"+ph+"')\">Eliminar</button>"+
     '</div>';
   });
   document.getElementById('at-users').innerHTML=html;
