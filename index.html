@@ -483,6 +483,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <a href="#" id="link-reset" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
       </div>
     </div>
+    <script>
+    // Registrar listeners inmediatamente — el boton ya existe en el DOM aqui
+    (function(){
+      function ready(fn){ if(document.readyState!=='loading'){fn();}else{document.addEventListener('DOMContentLoaded',fn);} }
+      ready(function(){
+        var b = document.getElementById('btn-signin');
+        var r2 = document.getElementById('btn-register');
+        var lr = document.getElementById('link-reset');
+        if(b) b.addEventListener('click', function(){ doSignin && doSignin(); });
+        if(r2) r2.addEventListener('click', function(){ doRegister && doRegister(); });
+        if(lr) lr.addEventListener('click', function(e){ e.preventDefault(); resetMyAccount && resetMyAccount(); });
+        var sp = document.getElementById('si-pass');
+        var sph = document.getElementById('si-phone');
+        if(sp) sp.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin && doSignin(); });
+        if(sph) sph.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin && doSignin(); });
+      });
+    })();
+    </script>
     <!-- REGISTER -->
     <div id="panel-register" style="display:none">
       <div class="login-form-wrap">
@@ -831,13 +849,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 // Listeners de login via addEventListener (Enter en inputs)
 window.addEventListener('load', function(){
   try{ initApp(); }catch(e){ console.error('initApp error:',e); }
-  // Bindings via addEventListener (no onclick en HTML)
-  document.getElementById('btn-signin').addEventListener('click', doSignin);
-  document.getElementById('btn-register').addEventListener('click', doRegister);
-  document.getElementById('link-reset').addEventListener('click', function(e){ e.preventDefault(); resetMyAccount(); });
-  document.getElementById('si-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
-  document.getElementById('si-phone').addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
-  document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if(e.key==='Enter') doRegister(); });
   var savedName = localStorage.getItem('jersey_site_name');
   if (savedName) applySiteName(savedName);
 });
