@@ -774,18 +774,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script src="catalog.js"></script>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // DATA
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // CATALOG_SEED se carga desde catalog.js (antes de este script)
 const ADMIN_PASS = '125670Carlos';
 const ADMIN_NAME = 'Carlos Adrian Luevano Alatorre';
 const ADMIN_PHONE = '3343745531';
 const WA_NUMBER = '523343745531'; // WhatsApp del negocio (recibe pedidos)
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // STATE
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 let state = {
   currentCategory: 'all',
   searchQuery: '',
@@ -800,12 +800,12 @@ let state = {
   currentProductId: null,
 };
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // STORAGE HELPERS
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 const APP_VERSION = '4';
 
-// Limpiar datos viejos si cambió versión
+// Limpiar datos viejos si cambi- versi-n
 (function migrateStorage() {
   const storedVer = localStorage.getItem('jersey_version');
   if (storedVer !== APP_VERSION) {
@@ -816,8 +816,8 @@ const APP_VERSION = '4';
   }
 })();
 
-// Los productos SIEMPRE vienen de CATALOG_SEED (tiene las imágenes base64).
-// En localStorage solo guardamos edits del admin (sin imágenes, solo metadatos).
+// Los productos SIEMPRE vienen de CATALOG_SEED (tiene las im-genes base64).
+// En localStorage solo guardamos edits del admin (sin im-genes, solo metadatos).
 function loadProducts() {
   const edits = JSON.parse(localStorage.getItem('jersey_edits') || '{}');
   return CATALOG_SEED.map(p => {
@@ -829,7 +829,7 @@ function loadProducts() {
 }
 
 function saveProducts(products) {
-  // Guardar solo los cambios del admin (sin imágenes base64) para no reventar localStorage
+  // Guardar solo los cambios del admin (sin im-genes base64) para no reventar localStorage
   const edits = {};
   products.forEach((p, i) => {
     const orig = CATALOG_SEED.find(o => o.id === p.id);
@@ -866,9 +866,9 @@ function saveUsers(users) {
 }
 
 function loadCategories(products) {
-  // Categorías base de los productos (siempre actualizadas)
+  // Categor-as base de los productos (siempre actualizadas)
   const fromProds = [...new Set(products.map(p => p.category))].sort();
-  // Categorías custom agregadas por admin (en localStorage)
+  // Categor-as custom agregadas por admin (en localStorage)
   const saved = localStorage.getItem('jersey_categories');
   if (saved) {
     try {
@@ -885,12 +885,12 @@ function saveCategories(cats) {
   localStorage.setItem('jersey_categories', JSON.stringify(cats));
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // LOGIN
-// ═══════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════
-// LOGIN CON CONTRASEÑA
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
+// -------------------------------------------------------
+// LOGIN CON CONTRASE-A
+// -------------------------------------------------------
 let _loginIsNew = false; // true = primer registro
 
 function checkPhoneExists() {
@@ -906,7 +906,7 @@ function checkPhoneExists() {
   }
   const isAdmin = (phone === ADMIN_PHONE);
   if (isAdmin) {
-    // Admin: solo contraseña, sin nombre ni confirmar
+    // Admin: solo contrase-a, sin nombre ni confirmar
     document.getElementById('fg-name').style.display = 'none';
     document.getElementById('fg-pass2').style.display = 'none';
     document.getElementById('login-note').textContent = 'Panel de administrador';
@@ -945,7 +945,7 @@ function doLogin() {
   const pass = passEl.value;
   if (!pass || pass.length < 4) { errEl.textContent = 'La contraseña debe tener al menos 4 caracteres.'; passEl.focus(); return; }
 
-  // ── Admin: camino propio, sin validar nombre ──
+  // -- Admin: camino propio, sin validar nombre --
   if (phone === ADMIN_PHONE) {
     if (pass !== ADMIN_PASS) { errEl.textContent = 'Contraseña incorrecta.'; passEl.value=''; passEl.focus(); return; }
     const users = loadUsers();
@@ -966,7 +966,7 @@ function doLogin() {
   const existing = users.find(u => u.phone === phone);
 
   if (existing) {
-    // Usuario existente — verificar contraseña
+    // Usuario existente - verificar contrase-a
     if (existing.passHash) {
       if (existing.passHash !== btoa(pass)) {
         errEl.textContent = 'Contraseña incorrecta.'; passEl.value=''; passEl.focus(); return;
@@ -979,7 +979,7 @@ function doLogin() {
     saveUsers(users);
     finishLogin(existing);
   } else {
-    // Usuario nuevo — necesita nombre
+    // Usuario nuevo - necesita nombre
     const name = nameEl.value.trim();
     if (!name || name.length < 2) {
       // Mostrar campo de nombre si estaba oculto y pedir que lo llene
@@ -988,7 +988,7 @@ function doLogin() {
       errEl.textContent = 'Ingresa tu nombre completo.'; nameEl.focus(); return;
     }
     const pass2 = pass2El.value;
-    // Si fg-pass2 está oculto (oninput no corrió), permitir sin confirmación
+    // Si fg-pass2 est- oculto (oninput no corri-), permitir sin confirmaci-n
     const pass2Hidden = document.getElementById('fg-pass2').style.display === 'none';
     if (!pass2Hidden && pass !== pass2) { errEl.textContent = 'Las contraseñas no coinciden.'; pass2El.focus(); return; }
     const user = { id:Date.now(), name, phone, passHash:btoa(pass), datetime:new Date().toISOString(), lastLogin:new Date().toISOString(), logins:1 };
@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('login-phone').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
   document.getElementById('login-pass') && document.getElementById('login-pass').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
 
-  // Autocompletar teléfono si ya visitó antes
+  // Autocompletar tel-fono si ya visit- antes
   const lastPhone = localStorage.getItem('jersey_last_phone');
   if (lastPhone) {
     document.getElementById('login-phone').value = lastPhone;
@@ -1037,7 +1037,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function logout() {
-  // Guardar último usuario para autocompletar la próxima vez
+  // Guardar -ltimo usuario para autocompletar la pr-xima vez
   if (state.currentUser) {
     localStorage.setItem('jersey_last_user', JSON.stringify({
       name: state.currentUser.name,
@@ -1053,9 +1053,9 @@ function logout() {
   if (state.adminOpen) closeAdmin();
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // INIT APP
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function initApp() {
   state.products = loadProducts();
   state.categories = loadCategories(state.products);
@@ -1065,9 +1065,9 @@ function initApp() {
   document.getElementById('search-input').addEventListener('input', e => onSearch(e.target.value));
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // SIDEBAR
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function renderSidebar() {
   const list = document.getElementById('cat-list');
   const total = state.products.length;
@@ -1093,9 +1093,9 @@ function setCategory(cat) {
   if (window.innerWidth <= 768) closeSidebar();
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // SEARCH & FILTER
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 let searchTimeout;
 function onSearch(val) {
   clearTimeout(searchTimeout);
@@ -1143,9 +1143,9 @@ function applyFilters() {
   renderPagination();
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // PRODUCTS GRID
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function renderProducts() {
   const grid = document.getElementById('products-grid');
   const start = (state.currentPage - 1) * state.itemsPerPage;
@@ -1177,9 +1177,9 @@ function renderProducts() {
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // PAGINATION
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function renderPagination() {
   const total = Math.ceil(state.filtered.length / state.itemsPerPage);
   const cur = state.currentPage;
@@ -1217,9 +1217,9 @@ function goPage(n) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // PRODUCT MODAL
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function openProduct(id) {
   const p = state.products.find(x => x.id === id);
   if (!p) return;
@@ -1247,9 +1247,9 @@ function closeProductModal() {
   document.body.style.overflow = '';
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // SIDEBAR MOBILE
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebar-overlay').classList.toggle('open');
@@ -1260,9 +1260,9 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('open');
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // ADMIN PANEL
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 let _adminUnlocked = false;
 
 function openAdmin() {
@@ -1277,7 +1277,7 @@ function openAdmin() {
   state.adminOpen = true;
   document.getElementById('admin-panel').classList.add('open');
   document.body.style.overflow = 'hidden';
-  // Mostrar sesión activa en el header
+  // Mostrar sesi-n activa en el header
   if (state.currentUser) {
     const u = state.currentUser;
     const dt = new Date(u.lastLogin || u.datetime);
@@ -1308,7 +1308,7 @@ function switchAdminTab(tab, btn) {
   if (tab === 'reviews') renderAdminReviews();
 }
 
-// ── Admin Stats ────────────────────────────────────────
+// -- Admin Stats ----------------------------------------
 function renderAdminStats() {
   const users = loadUsers();
   const prods = state.products;
@@ -1323,7 +1323,7 @@ function renderAdminStats() {
   `;
 }
 
-// ── Users Table ────────────────────────────────────────
+// -- Users Table ----------------------------------------
 function renderUsersTable(query) {
   const users = loadUsers();
   let filtered = users;
@@ -1346,7 +1346,7 @@ function renderUsersTable(query) {
     const lastStr = lastDt.toLocaleDateString('es-MX', {day:'2-digit',month:'short'}) + ' ' +
       lastDt.toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit'});
     const initials = u.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    // Decodificar contraseña (guardada como btoa)
+    // Decodificar contrase-a (guardada como btoa)
     let passShow = '—';
     if (u.passHash) {
       try { passShow = atob(u.passHash); } catch(e) { passShow = '••••'; }
@@ -1398,7 +1398,7 @@ function exportUsers() {
   showToast('CSV exportado', 'success');
 }
 
-// ── Admin Products ─────────────────────────────────────
+// -- Admin Products -------------------------------------
 function renderAdminProducts(query) {
   const catFilter = document.getElementById('prod-cat-filter')?.value || '';
   let prods = state.products;
@@ -1498,7 +1498,7 @@ function clearAddForm() {
   });
 }
 
-// ── Categories Admin ───────────────────────────────────
+// -- Categories Admin -----------------------------------
 function renderCategoriesAdmin() {
   const list = document.getElementById('categories-admin-list');
   list.innerHTML = state.categories.map(cat => `
@@ -1569,9 +1569,9 @@ function populateCategorySelects() {
   });
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // TOAST
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 let toastTimer;
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
@@ -1582,19 +1582,19 @@ function showToast(msg, type='success') {
   toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // UTILS
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // BOOT
-// ═══════════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════
-// RESEÑAS / OPINIONES
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
+// -------------------------------------------------------
+// RESE-AS / OPINIONES
+// -------------------------------------------------------
 let _selectedStars = 0;
 
 function loadReviews() {
@@ -1670,9 +1670,9 @@ function submitReview() {
   showToast('¡Opinión publicada! 🙌', 'success');
 }
 
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 // CARRITO
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
 function loadCart() {
   try { return JSON.parse(localStorage.getItem('jersey_cart') || '[]'); } catch(e) { return []; }
 }
@@ -1766,14 +1766,14 @@ _Enviado desde el catálogo_`;
   window.open(url, '_blank');
 }
 
-// ═══════════════════════════════════════════════════════
-// RESEÑAS — PÁGINA GLOBAL
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
+// RESE-AS - P-GINA GLOBAL
+// -------------------------------------------------------
 function openReviewsPage() {
   const all = loadReviews();
   const prods = state.products;
   const list = document.getElementById('reviews-page-list');
-  // Aplanar todas las reseñas con info de producto
+  // Aplanar todas las rese-as con info de producto
   let items = [];
   for (const [pid, revs] of Object.entries(all)) {
     const prod = prods.find(x=>String(x.id)===String(pid));
@@ -1813,9 +1813,9 @@ function closePage(id) {
   document.querySelector('.layout').style.display = '';
 }
 
-// ═══════════════════════════════════════════════════════
-// ADMIN — RESEÑAS
-// ═══════════════════════════════════════════════════════
+// -------------------------------------------------------
+// ADMIN - RESE-AS
+// -------------------------------------------------------
 function renderAdminReviews() {
   const all = loadReviews();
   const q = (document.getElementById('review-admin-search')?.value||'').toLowerCase();
