@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<input id="p" type="text" value="3343745531">
+<input id="s" type="password" value="125670Carlos">
+<button id="btn">Entrar</button>
+<div id="out">esperando...</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('btn').addEventListener('click', function() {
+    var p = document.getElementById('p').value;
+    var s = document.getElementById('s').value;
+    document.getElementById('out').textContent = 'CLICK OK: ' + p + ' / ' + s;
+    console.log('CLICK FUNCIONÓ');
+  });
+});
+</script>
+</body>
+</html>
