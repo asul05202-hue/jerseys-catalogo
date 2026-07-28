@@ -114,6 +114,31 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-h
   .content{padding:14px 10px}
   .header{padding:10px 12px}
 }
+
+/* GRID DE PRODUCTOS VISUAL (709 jerseys) */
+.pcat-bar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px;position:sticky;top:60px;background:#0f0f0f;padding:8px 0;z-index:50}
+.pcat-btn{padding:6px 11px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;color:#888;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.pcat-btn:hover{border-color:#e63946;color:#fff}
+.pcat-btn.active{background:#e63946;border-color:#e63946;color:#fff}
+.pcount{font-size:12px;color:#555;margin-bottom:12px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.pcard{background:#1a1a1a;border:1px solid #252525;border-radius:12px;overflow:hidden;transition:border-color .2s,transform .15s;display:flex;flex-direction:column}
+.pcard:hover{border-color:#e63946;transform:translateY(-2px)}
+.pcard-img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#111;display:block}
+.pcard-body{padding:10px 12px 14px;display:flex;flex-direction:column;flex:1}
+.pcard-name{font-size:13px;font-weight:700;line-height:1.35;margin-bottom:4px}
+.pcard-cat{font-size:10px;color:#777;margin-bottom:8px}
+.pcard-btns{display:flex;gap:6px;margin-top:auto}
+.pcard-btn-ver{flex:1;padding:8px;background:#222;color:#fff;border:none;border-radius:7px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;text-decoration:none;transition:background .2s}
+.pcard-btn-ver:hover{background:#333}
+.pcard-btn-wa{padding:8px 11px;background:#25d366;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;text-decoration:none;transition:background .2s}
+.pcard-btn-wa:hover{background:#1ebe5c}
+.img-loading{background:#111;position:relative}
+.img-loading::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#111,#1f1f1f,#111);background-size:200% 100%;animation:shimmer 1.2s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media(max-width:500px){
+  .pgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+}
 </style>
 </head>
 <body>
@@ -156,6 +181,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-h
     </div>
   </div>
   <div class="content" id="main-content"></div>
+
+  <!-- GRID VISUAL DE PRODUCTOS (709 jerseys) -->
+  <div class="content">
+    <div class="sec-title">Catálogo visual</div>
+    <div class="pcat-bar" id="pcat-bar"></div>
+    <div class="pcount" id="pcount"></div>
+    <div class="pgrid" id="product-grid"></div>
+  </div>
+
   <div class="content">
     <div class="sec-title">Resenas de clientes</div>
     <div id="public-reviews"></div>
@@ -416,6 +450,7 @@ function enterApp(s){
   document.getElementById('btn-adm').style.display = s.role==='admin' ? '' : 'none';
   renderCatalog();
   renderPublicReviews();
+  renderProductGrid();
 }
 
 // LOGOUT
@@ -617,6 +652,97 @@ function renderAdminReviews(){
 
 function deleteReview(idx){
   var reviews=loadReviews(); reviews.splice(idx,1); saveReviews(reviews); renderAdminReviews(); renderPublicReviews();
+}
+
+// ============================================================
+// GRID VISUAL DE PRODUCTOS (709 jerseys con imagen)
+// Datos: products.json (cargado via fetch). Imagenes servidas desde
+// el repo fuente asul05202-hue/catalogo-jerseys via jsDelivr CDN.
+// No afecta login/registro/admin - solo render visual post-login.
+// ============================================================
+var PRODUCTS = [];          // 709 productos
+var PRODUCTS_LOADED = false;
+var PCAT_ACTIVE = 'all';    // filtro de categoria activo
+
+// Carga products.json una sola vez y renderiza
+function renderProductGrid(){
+  if(PRODUCTS_LOADED){
+    _renderPCatBar();
+    _renderPGrid();
+    return;
+  }
+  var grid = document.getElementById('product-grid');
+  if(grid) grid.innerHTML = '<div style="color:#555;grid-column:1/-1;text-align:center;padding:30px">Cargando catálogo...</div>';
+  fetch('products.json', {cache:'force-cache'})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject('HTTP '+r.status); })
+    .then(function(data){
+      PRODUCTS = Array.isArray(data) ? data : [];
+      PRODUCTS_LOADED = true;
+      _renderPCatBar();
+      _renderPGrid();
+    })
+    .catch(function(e){
+      if(grid) grid.innerHTML = '<div style="color:#888;grid-column:1/-1;text-align:center;padding:30px;font-size:13px">No se pudo cargar el catálogo visual. ('+e+')</div>';
+    });
+}
+
+// Barra de categorias (filtros)
+function _renderPCatBar(){
+  var bar = document.getElementById('pcat-bar');
+  if(!bar) return;
+  var cats = [];
+  var seen = {};
+  PRODUCTS.forEach(function(p){
+    var c = p.category || 'Otros';
+    if(!seen[c]){ seen[c]=1; cats.push(c); }
+  });
+  cats.sort();
+  var html = '<button class="pcat-btn'+(PCAT_ACTIVE==='all'?' active':'')+'" onclick="filterProducts(\'all\')">Todos</button>';
+  cats.forEach(function(c){
+    html += '<button class="pcat-btn'+(PCAT_ACTIVE===c?' active':'')+'" onclick="filterProducts(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</button>';
+  });
+  bar.innerHTML = html;
+}
+
+function filterProducts(cat){
+  PCAT_ACTIVE = cat;
+  _renderPCatBar();
+  _renderPGrid();
+}
+
+// Render de la cuadricula
+function _renderPGrid(){
+  var grid = document.getElementById('product-grid');
+  var cnt  = document.getElementById('pcount');
+  if(!grid) return;
+  var list = PCAT_ACTIVE==='all' ? PRODUCTS : PRODUCTS.filter(function(p){ return (p.category||'')===PCAT_ACTIVE; });
+  if(cnt) cnt.textContent = list.length + ' productos' + (PCAT_ACTIVE!=='all' ? ' en '+PCAT_ACTIVE : '');
+  if(list.length===0){ grid.innerHTML='<div style="color:#555;grid-column:1/-1;text-align:center;padding:30px">Sin productos en esta categoria.</div>'; return; }
+  var waBase = 'https://wa.me/'+WA_NUMBER+'?text=';
+  var html='';
+  list.forEach(function(p){
+    var name = p.name || 'Producto';
+    var img  = p.image || '';
+    var cat  = p.category || '';
+    var ver  = p.image ? p.image.replace('cdn.jsdelivr.net/gh/','').replace(/@main/,'') : '';
+    // Enlace "ver" = abrir la imagen original (jsdelivr) en nueva pestaña
+    var verHref = p.image || '#';
+    var waMsg   = encodeURIComponent('Hola, me interesa este jersey: '+name);
+    html +=
+      '<div class="pcard">'+
+        (img ? '<img class="pcard-img img-loading" src="'+img+'" alt="'+name+'" loading="lazy" onload="this.classList.remove(\'img-loading\')" onerror="this.classList.remove(\'img-loading\');this.onerror=null;this.style.background=\'#111\'">' :
+               '<div class="pcard-img" style="display:flex;align-items:center;justify-content:center;color:#333;font-size:30px">🎽</div>')+
+        '<div class="pcard-body">'+
+          '<div class="pcard-name">'+name+'</div>'+
+          (cat ? '<div class="pcard-cat">'+cat+'</div>' : '')+
+          '<div class="pcard-btns">'+
+            (img ? '<a class="pcard-btn-ver" href="'+verHref+'" target="_blank" rel="noopener">Ver</a>' : '')+
+            '<a class="pcard-btn-wa" href="'+waBase+waMsg+'" target="_blank" rel="noopener">WhatsApp</a>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+  });
+  grid.innerHTML = html;
 }
 
 // AUTO-LOGIN
