@@ -468,7 +468,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
     <!-- INICIAR SESIÓN -->
     <div id="panel-signin">
-      <form autocomplete="off">
+      <form autocomplete="off" onsubmit="doSignin();return false;">
         <div class="form-group">
           <label for="si-phone">Teléfono</label>
           <input type="text" id="si-phone" inputmode="numeric" pattern="[0-9]*" placeholder="10 dígitos" autocomplete="tel"/>
@@ -478,7 +478,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"/>
         </div>
         <div class="login-error" id="si-error"></div>
-        <button type="button" class="login-btn" id="btn-signin">Iniciar sesión →</button>
+        <button type="submit" class="login-btn" id="btn-signin">Iniciar sesión →</button>
       </form>
       <div style="margin-top:14px;text-align:center">
         <a href="#" onclick="resetMyAccount();return false" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
@@ -487,7 +487,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
     <!-- REGISTRARSE -->
     <div id="panel-register" style="display:none">
-      <form autocomplete="off">
+      <form autocomplete="off" onsubmit="doRegister();return false;">
         <div class="form-group">
           <label for="reg-name">Nombre completo</label>
           <input type="text" id="reg-name" placeholder="Tu nombre completo" autocomplete="name"/>
