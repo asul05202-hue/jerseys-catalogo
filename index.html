@@ -524,7 +524,7 @@ function entrarAlCatalogo(usuario) {
   localStorage.setItem('jersey_session', JSON.stringify({id:usuario.id,name:usuario.name,phone:usuario.phone,loginAt:new Date().toISOString()}));
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.add('visible');
-  if (typeof initApp === 'function') { try { initApp(); } catch(e) { console.error('initApp:', e); } }
+  window._pendingUser = usuario;
   if (typeof window.onUserLoggedIn === 'function') window.onUserLoggedIn(usuario);
 }
 
