@@ -774,6 +774,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <script src="catalog.js"></script>
 
 <script>
+try {
 // -------------------------------------------------------
 // DATA
 // -------------------------------------------------------
@@ -1865,6 +1866,7 @@ function deleteAllReviews() {
 }
 
 initApp();
+} catch(e) { document.body.innerHTML += "<div style='background:red;color:white;padding:20px;font-size:16px;position:fixed;top:0;left:0;right:0;z-index:9999'>ERROR: " + e.message + "</div>"; console.error("ERR:", e); }
 </script>
 </body>
 </html>
