@@ -931,6 +931,7 @@ function checkPhoneExists() {
 }
 
 function doLogin() {
+  console.log('[doLogin] called, phone:', document.getElementById('login-phone').value, 'pass len:', document.getElementById('login-pass').value.length);
   const nameEl  = document.getElementById('login-name');
   const phoneEl = document.getElementById('login-phone');
   const passEl  = document.getElementById('login-pass');
