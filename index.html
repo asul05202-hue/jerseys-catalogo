@@ -927,7 +927,7 @@ function switchLoginTab(tab) {
   document.getElementById('panel-register').style.display = tab==='register' ? '' : 'none';
 }
 
-function doSignin() { console.log("doSignin called");
+function doSignin() { console.log("doSignin called"); alert("doSignin ejecutado!");
   const phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
   const pass  = document.getElementById('si-pass').value;
   const errEl = document.getElementById('si-error');
