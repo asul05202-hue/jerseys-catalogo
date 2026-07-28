@@ -263,7 +263,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-h
 
 <script src="catalog.js"></script>
 <script>
-// ─── CONFIGURACIÓN ───────────────────────────────
+// --- CONFIGURACI-N -------------------------------
 var ADMIN_PHONE = '3343745531';
 var ADMIN_PASS  = '125670Carlos';
 var ADMIN_NAME  = 'Carlos';
@@ -271,12 +271,12 @@ var WA_NUMBER   = '523343745531';
 var STORE_KEY   = 'jersey_users';
 var SESSION_KEY = 'jersey_session';
 
-// ─── ESTADO ──────────────────────────────────────
+// --- ESTADO --------------------------------------
 var currentCat   = 'Todos';
 var currentUser  = null;
 var allProducts  = [];
 
-// ─── UTILIDADES DE STORAGE ───────────────────────
+// --- UTILIDADES DE STORAGE -----------------------
 function getUsers() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e) { return []; }
 }
@@ -290,7 +290,7 @@ function saveSession(s) {
   localStorage.setItem(SESSION_KEY, JSON.stringify(s));
 }
 
-// ─── TABS LOGIN ───────────────────────────────────
+// --- TABS LOGIN -----------------------------------
 function showTab(t) {
   document.getElementById('tab-login').style.display    = t==='login'    ? '' : 'none';
   document.getElementById('tab-register').style.display = t==='register' ? '' : 'none';
@@ -299,19 +299,19 @@ function showTab(t) {
   });
 }
 
-// ─── LOGIN ────────────────────────────────────────
+// --- LOGIN ----------------------------------------
 function doLogin() {
   var phone = document.getElementById('l-phone').value.trim();
   var pass  = document.getElementById('l-pass').value;
   var err   = document.getElementById('l-err');
   err.textContent = '';
 
-  if (phone.length < 7) { err.textContent = 'Ingresa tu teléfono.'; return; }
-  if (!pass)            { err.textContent = 'Ingresa tu contraseña.'; return; }
+  if (phone.length < 7) { err.textContent = 'Ingresa tu tel-fono.'; return; }
+  if (!pass)            { err.textContent = 'Ingresa tu contrase-a.'; return; }
 
   // Admin
   if (phone === ADMIN_PHONE) {
-    if (pass !== ADMIN_PASS) { err.textContent = 'Contraseña incorrecta.'; return; }
+    if (pass !== ADMIN_PASS) { err.textContent = 'Contrase-a incorrecta.'; return; }
     saveSession({ phone: ADMIN_PHONE, name: ADMIN_NAME, isAdmin: true });
     enterApp({ phone: ADMIN_PHONE, name: ADMIN_NAME, isAdmin: true });
     return;
@@ -320,13 +320,13 @@ function doLogin() {
   // Usuario normal
   var users = getUsers();
   var user  = users.find(function(u){ return u.phone === phone; });
-  if (!user)        { err.textContent = 'Teléfono no registrado.'; return; }
-  if (user.pass !== pass) { err.textContent = 'Contraseña incorrecta.'; return; }
+  if (!user)        { err.textContent = 'Tel-fono no registrado.'; return; }
+  if (user.pass !== pass) { err.textContent = 'Contrase-a incorrecta.'; return; }
   saveSession(user);
   enterApp(user);
 }
 
-// ─── REGISTRO ────────────────────────────────────
+// --- REGISTRO ------------------------------------
 function doRegister() {
   var name  = document.getElementById('r-name').value.trim();
   var phone = document.getElementById('r-phone').value.trim();
@@ -335,13 +335,13 @@ function doRegister() {
   err.textContent = '';
 
   if (!name)            { err.textContent = 'Ingresa tu nombre.'; return; }
-  if (phone.length < 7) { err.textContent = 'Ingresa tu teléfono.'; return; }
-  if (pass.length < 6)  { err.textContent = 'Contraseña mínimo 6 caracteres.'; return; }
-  if (phone === ADMIN_PHONE) { err.textContent = 'Teléfono no disponible.'; return; }
+  if (phone.length < 7) { err.textContent = 'Ingresa tu tel-fono.'; return; }
+  if (pass.length < 6)  { err.textContent = 'Contrase-a m-nimo 6 caracteres.'; return; }
+  if (phone === ADMIN_PHONE) { err.textContent = 'Tel-fono no disponible.'; return; }
 
   var users = getUsers();
   if (users.find(function(u){ return u.phone === phone; })) {
-    err.textContent = 'Ese teléfono ya está registrado.'; return;
+    err.textContent = 'Ese tel-fono ya est- registrado.'; return;
   }
   var user = { phone: phone, name: name, pass: pass, isAdmin: false, date: new Date().toISOString() };
   users.push(user);
@@ -350,7 +350,7 @@ function doRegister() {
   enterApp(user);
 }
 
-// ─── ENTRAR AL APP ───────────────────────────────
+// --- ENTRAR AL APP -------------------------------
 function enterApp(user) {
   currentUser = user;
   document.getElementById('login-screen').style.display = 'none';
@@ -361,7 +361,7 @@ function enterApp(user) {
   initCatalog();
 }
 
-// ─── LOGOUT ──────────────────────────────────────
+// --- LOGOUT --------------------------------------
 function doLogout() {
   localStorage.removeItem(SESSION_KEY);
   currentUser = null;
@@ -373,7 +373,7 @@ function doLogout() {
   document.getElementById('l-err').textContent = '';
 }
 
-// ─── CATÁLOGO ────────────────────────────────────
+// --- CAT-LOGO ------------------------------------
 function initCatalog() {
   allProducts = window.CATALOG_SEED || [];
   buildCatBar();
@@ -419,7 +419,7 @@ function applyFilters() {
 function renderGrid(products) {
   var grid = document.getElementById('products-grid');
   if (!products.length) {
-    grid.innerHTML = '<div class="empty"><div class="ic">🔍</div><p>Sin resultados</p></div>';
+    grid.innerHTML = '<div class="empty"><div class="ic">-</div><p>Sin resultados</p></div>';
     return;
   }
   grid.innerHTML = products.map(function(p){
@@ -433,12 +433,12 @@ function renderGrid(products) {
         '<div class="card-name">' + p.name + '</div>' +
         '<div class="card-cat">' + (p.category||'') + '</div>' +
         price +
-        '<a class="btn-wa" href="' + waLink + '" target="_blank" onclick="event.stopPropagation()">📲 Pedir</a>' +
+        '<a class="btn-wa" href="' + waLink + '" target="_blank" onclick="event.stopPropagation()">- Pedir</a>' +
       '</div></div>';
   }).join('');
 }
 
-// ─── MODAL ───────────────────────────────────────
+// --- MODAL ---------------------------------------
 function openModal(id) {
   var p = allProducts.find(function(x){ return x.id === id; });
   if (!p) return;
@@ -459,7 +459,7 @@ function closeModal(e) {
   }
 }
 
-// ─── ADMIN ───────────────────────────────────────
+// --- ADMIN ---------------------------------------
 function openAdmin() {
   var users = getUsers();
   var rows  = users.length ? users.map(function(u, i){
@@ -468,12 +468,12 @@ function openAdmin() {
   }).join('') : '<tr><td colspan="4" style="color:#555;text-align:center;padding:20px">Sin usuarios registrados</td></tr>';
   document.getElementById('admin-content').innerHTML =
     '<p style="color:#aaa;margin-bottom:16px">Total usuarios: <strong style="color:#fff">' + users.length + '</strong></p>' +
-    '<table class="user-table"><thead><tr><th>Nombre</th><th>Teléfono</th><th>Registro</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+    '<table class="user-table"><thead><tr><th>Nombre</th><th>Tel-fono</th><th>Registro</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
   document.getElementById('admin-panel').classList.add('open');
 }
 
 function delUser(i) {
-  if (!confirm('¿Eliminar este usuario?')) return;
+  if (!confirm('-Eliminar este usuario?')) return;
   var users = getUsers();
   users.splice(i, 1);
   saveUsers(users);
@@ -484,7 +484,7 @@ function closeAdmin() {
   document.getElementById('admin-panel').classList.remove('open');
 }
 
-// ─── INICIO ──────────────────────────────────────
+// --- INICIO --------------------------------------
 (function init(){
   var sess = getSession();
   if (sess && sess.phone) {
