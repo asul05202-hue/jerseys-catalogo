@@ -477,7 +477,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
           <input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"/>
         </div>
         <div class="login-error" id="si-error"></div>
-        <button type="button" class="login-btn" id="btn-signin" onclick="doSignin()">Iniciar sesión →</button>
+        <button type="button" class="login-btn" id="btn-signin" onclick="window.__test=1;console.log('CLICK_FIRED');document.getElementById('si-error').textContent='CLICK_OK';">Iniciar sesión →</button>
       </div>
       <div style="margin-top:14px;text-align:center">
         <a href="#" onclick="resetMyAccount();return false" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
