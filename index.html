@@ -129,20 +129,18 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-h
     <button class="tab-btn" onclick="showTab('reg')">Registrarme</button>
   </div>
   <div id="tab-login">
-    <form onsubmit="doLogin();return false;" style="margin:0">
+    
     <div class="field"><label>TELEFONO</label><input type="tel" id="lph" placeholder="10 digitos" maxlength="10" autocomplete="username"></div>
     <div class="field"><label>CONTRASENA</label><input type="password" id="lps" placeholder="..." autocomplete="current-password"></div>
-    <button type="submit" class="btn-main">Entrar al catalogo</button>
-    </form>
-  </div>
+    <button type="button" id="btn-login" class="btn-main">Entrar al catalogo</button>
+      </div>
   <div id="tab-reg" style="display:none">
-    <form onsubmit="doRegister();return false;" style="margin:0">
+    
     <div class="field"><label>NOMBRE COMPLETO</label><input type="text" id="rn" placeholder="Tu nombre" autocomplete="name"></div>
     <div class="field"><label>TELEFONO</label><input type="tel" id="rph" placeholder="10 digitos" maxlength="10" autocomplete="username"></div>
     <div class="field"><label>CONTRASENA</label><input type="password" id="rps" placeholder="Minimo 4 caracteres" autocomplete="new-password"></div>
-    <button type="submit" class="btn-main">Crear cuenta</button>
-    </form>
-  </div>
+    <button type="button" id="btn-reg" class="btn-main">Crear cuenta</button>
+      </div>
   <div id="login-err"></div>
 </div>
 </div>
@@ -565,6 +563,12 @@ function renderAdminReviews(){
 function deleteReview(idx){
   var reviews=loadReviews(); reviews.splice(idx,1); saveReviews(reviews); renderAdminReviews(); renderPublicReviews();
 }
+
+// BIND BOTONES
+document.getElementById('btn-login').addEventListener('click', doLogin);
+document.getElementById('btn-reg').addEventListener('click', doRegister);
+document.getElementById('lps').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('rps').addEventListener('keydown', function(e){ if(e.key==='Enter') doRegister(); });
 
 // AUTO-LOGIN
 (function(){
