@@ -890,8 +890,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="toast" id="toast"></div>
 
-<script src="catalog.js"></script>
-
 
 <script>
 // Listeners de login via addEventListener (Enter en inputs)
@@ -2032,109 +2030,33 @@ function deleteAllReviews() {
 
 
 </script>
-<script src="catalog.js"></script>
 
-
-<script>
-var ADMIN_PHONE = '3343745531';
-var ADMIN_PASS  = '125670Carlos';
-var ADMIN_NAME  = 'Carlos Adrian Luevano Alatorre';
-
-function showTab(tab) {
-  document.getElementById('panel-signin').style.display    = tab==='signin'   ? '' : 'none';
-  document.getElementById('panel-register').style.display  = tab==='register' ? '' : 'none';
-  document.getElementById('tab-btn-signin').classList.toggle('active',   tab==='signin');
-  document.getElementById('tab-btn-register').classList.toggle('active', tab==='register');
-}
-
-function cargarUsuarios() {
-  try { return JSON.parse(localStorage.getItem('jersey_users') || '[]'); } catch(e) { return []; }
-}
-function guardarUsuarios(arr) { localStorage.setItem('jersey_users', JSON.stringify(arr)); }
-
-function hacerLogin() {
-  var err   = document.getElementById('si-error');
-  var phone = (document.getElementById('si-phone').value || '').replace(/\D/g,'').trim();
-  var pass  = (document.getElementById('si-pass').value  || '').trim();
-  err.textContent = '';
-  if (!phone || phone.length < 7) { err.textContent = 'Ingresa tu n\u00famero de tel\u00e9fono'; return; }
-  if (!pass  || pass.length  < 3) { err.textContent = 'Ingresa tu contrase\u00f1a';            return; }
-  if (phone === ADMIN_PHONE) {
-    if (pass !== ADMIN_PASS) { err.textContent = 'Contrase\u00f1a incorrecta'; return; }
-    var users = cargarUsuarios();
-    var adm   = users.find(function(u){ return u.phone===phone; });
-    if (!adm) { adm={id:Date.now(),name:ADMIN_NAME,phone:phone,passHash:btoa(pass),datetime:new Date().toISOString(),logins:0}; users.unshift(adm); }
-    else       { adm.lastLogin=new Date().toISOString(); adm.logins=(adm.logins||0)+1; }
-    guardarUsuarios(users);
-    entrarAlCatalogo(adm);
-    return;
-  }
-  var users = cargarUsuarios();
-  var u = users.find(function(x){ return x.phone===phone; });
-  if (!u)                                      { err.textContent = 'No encontr\u00e9 esa cuenta. Reg\u00edstrate primero'; return; }
-  if (u.passHash && u.passHash!==btoa(pass))   { err.textContent = 'Contrase\u00f1a incorrecta'; document.getElementById('si-pass').value=''; return; }
-  u.lastLogin=new Date().toISOString(); u.logins=(u.logins||0)+1;
-  guardarUsuarios(users);
-  entrarAlCatalogo(u);
-}
-
-function hacerRegistro() {
-  var err   = document.getElementById('reg-error');
-  var name  = (document.getElementById('reg-name').value  || '').trim();
-  var phone = (document.getElementById('reg-phone').value || '').replace(/\D/g,'').trim();
-  var pass  = (document.getElementById('reg-pass').value  || '').trim();
-  var pass2 = (document.getElementById('reg-pass2').value || '').trim();
-  err.textContent = '';
-  if (!name||name.length<2)   { err.textContent='Escribe tu nombre'; return; }
-  if (!phone||phone.length<7) { err.textContent='Ingresa tu n\u00famero de tel\u00e9fono'; return; }
-  if (!pass||pass.length<4)   { err.textContent='M\u00ednimo 4 caracteres'; return; }
-  if (pass!==pass2)           { err.textContent='Las contrase\u00f1as no coinciden'; return; }
-  var users = cargarUsuarios();
-  if (users.find(function(u){ return u.phone===phone; })) { err.textContent='N\u00famero ya registrado. Inicia sesi\u00f3n'; return; }
-  var nuevo={id:Date.now(),name:name,phone:phone,passHash:btoa(pass),datetime:new Date().toISOString(),logins:0};
-  users.push(nuevo); guardarUsuarios(users); entrarAlCatalogo(nuevo);
-}
-
-function resetearCuenta() {
-  var phone=prompt('Ingresa tu n\u00famero para restablecer:');
-  if(!phone) return; phone=phone.replace(/\D/g,'');
-  var users=cargarUsuarios(); var idx=users.findIndex(function(u){return u.phone===phone;});
-  if(idx<0){alert('No encontr\u00e9 ese n\u00famero');return;}
-  users.splice(idx,1); guardarUsuarios(users); alert('Cuenta eliminada. Puedes registrarte de nuevo.');
-}
-
-// Listeners Enter
-document.getElementById('si-pass').addEventListener('keydown',   function(e){ if(e.key==='Enter') hacerLogin(); });
-document.getElementById('si-phone').addEventListener('keydown',  function(e){ if(e.key==='Enter') hacerLogin(); });
-document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if(e.key==='Enter') hacerRegistro(); });
-</script>
-
-<!-- catalog.js carga los 700+ productos -->
+<!-- catalog.js: 700+ productos — SE CARGA UNA SOLA VEZ al final -->
 <script src="catalog.js"></script>
 
 <script>
-// CATALOG_SEED ya esta listo — llamar initApp siempre
+// Este bloque corre cuando catalog.js ya está listo (CATALOG_SEED disponible)
 (function(){
-  // Inicializar productos (requiere CATALOG_SEED de catalog.js)
+  // 1. Siempre inicializar los productos
   if (typeof initApp === 'function') {
-    try { initApp(); } catch(e) { console.error('initApp error:', e); }
+    try { initApp(); } catch(e) { console.error('[post-catalog] initApp error:', e); }
+  } else {
+    console.error('[post-catalog] initApp NO DEFINIDA');
   }
 
-  // Si el usuario hizo login manual, el app ya es visible — nada mas que hacer
+  // 2. Si el usuario ya hizo login manual (app visible) — listo
   if (document.getElementById('app').classList.contains('visible')) {
     return;
   }
 
-  // Si habia sesion guardada en localStorage, restaurarla
+  // 3. Restaurar sesion guardada
   var s = localStorage.getItem('jersey_session');
   if (s) {
     try {
       var u = JSON.parse(s);
-      var ok = false;
-      if (u.phone === ADMIN_PHONE) { ok = true; }
-      else {
-        var us = cargarUsuarios();
-        var ex = us.find(function(x){ return x.phone === u.phone; });
+      var ok = (u.phone === ADMIN_PHONE);
+      if (!ok) {
+        var ex = cargarUsuarios().find(function(x){ return x.phone === u.phone; });
         if (ex) { u = ex; ok = true; }
       }
       if (ok) {
@@ -2145,7 +2067,7 @@ document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if
     } catch(e) {}
     localStorage.removeItem('jersey_session');
   }
-  // Si no hay sesion: dejar el login visible (ya lo esta por defecto)
+  // Sin sesion: login visible por defecto
 })();
 </script>
 </body>
