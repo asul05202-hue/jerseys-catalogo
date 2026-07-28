@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="Catálogo de Jerseys - Encuentra tu jersey favorito"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
 <title>Catálogo de Jerseys</title>
 <style>
 /* ── Reset & Base ─────────────────────────────── */
@@ -449,6 +449,449 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .toast.success::before{content:'✓';color:#4ade80;font-size:18px}
 .toast.error::before{content:'✗';color:#f87171;font-size:18px}
 </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">⚽</div>
+    <div class="login-brand" id="login-brand-text">Jersey Store</div>
+    <div class="login-sub">Catálogo exclusivo de jerseys</div>
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-btn-signin"   onclick="showTab('signin')">Iniciar sesión</button>
+      <button class="login-tab"        id="tab-btn-register" onclick="showTab('register')">Registrarse</button>
+    </div>
+    <div id="panel-signin">
+      <div class="login-form-wrap">
+        <div class="form-group"><label>Teléfono</label><input type="tel" id="si-phone" placeholder="10 dígitos" autocomplete="tel"></div>
+        <div class="form-group"><label>Contraseña</label><input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"></div>
+        <div class="login-error" id="si-error"></div>
+        <div style="margin-top:16px"><button type="button" class="login-btn" onclick="hacerLogin()">Iniciar sesión →</button></div>
+      </div>
+      <div style="margin-top:14px;text-align:center">
+        <a href="#" onclick="resetearCuenta();return false;" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer</a>
+      </div>
+    </div>
+    <div id="panel-register" style="display:none">
+      <div class="login-form-wrap">
+        <div class="form-group"><label>Nombre completo</label><input type="text"     id="reg-name"  placeholder="Tu nombre"             autocomplete="name"></div>
+        <div class="form-group"><label>Teléfono</label>         <input type="tel"      id="reg-phone" placeholder="10 dígitos"          autocomplete="tel"></div>
+        <div class="form-group"><label>Contraseña</label>       <input type="password" id="reg-pass"  placeholder="Mínimo 4 caracteres"  autocomplete="new-password"></div>
+        <div class="form-group"><label>Confirmar</label>             <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" autocomplete="new-password"></div>
+        <div class="login-error" id="reg-error"></div>
+        <div style="margin-top:16px"><button type="button" class="login-btn" onclick="hacerRegistro()">Crear cuenta →</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+var ADMIN_PHONE = '3343745531';
+var ADMIN_PASS  = '125670Carlos';
+var ADMIN_NAME  = 'Carlos Adrian Luevano Alatorre';
+
+function showTab(tab) {
+  document.getElementById('panel-signin').style.display    = tab==='signin'   ? '' : 'none';
+  document.getElementById('panel-register').style.display  = tab==='register' ? '' : 'none';
+  document.getElementById('tab-btn-signin').classList.toggle('active',   tab==='signin');
+  document.getElementById('tab-btn-register').classList.toggle('active', tab==='register');
+}
+
+function cargarUsuarios() {
+  try { return JSON.parse(localStorage.getItem('jersey_users') || '[]'); } catch(e) { return []; }
+}
+function guardarUsuarios(arr) { localStorage.setItem('jersey_users', JSON.stringify(arr)); }
+
+function hacerLogin() {
+  var err   = document.getElementById('si-error');
+  var phone = (document.getElementById('si-phone').value || '').replace(/\D/g,'').trim();
+  var pass  = (document.getElementById('si-pass').value  || '').trim();
+  err.textContent = '';
+  if (!phone || phone.length < 7) { err.textContent = 'Ingresa tu n\u00famero de tel\u00e9fono'; return; }
+  if (!pass  || pass.length  < 3) { err.textContent = 'Ingresa tu contrase\u00f1a';            return; }
+  if (phone === ADMIN_PHONE) {
+    if (pass !== ADMIN_PASS) { err.textContent = 'Contrase\u00f1a incorrecta'; return; }
+    var users = cargarUsuarios();
+    var adm   = users.find(function(u){ return u.phone===phone; });
+    if (!adm) { adm={id:Date.now(),name:ADMIN_NAME,phone:phone,passHash:btoa(pass),datetime:new Date().toISOString(),logins:0}; users.unshift(adm); }
+    else       { adm.lastLogin=new Date().toISOString(); adm.logins=(adm.logins||0)+1; }
+    guardarUsuarios(users);
+    entrarAlCatalogo(adm);
+    return;
+  }
+  var users = cargarUsuarios();
+  var u = users.find(function(x){ return x.phone===phone; });
+  if (!u)                                      { err.textContent = 'No encontr\u00e9 esa cuenta. Reg\u00edstrate primero'; return; }
+  if (u.passHash && u.passHash!==btoa(pass))   { err.textContent = 'Contrase\u00f1a incorrecta'; document.getElementById('si-pass').value=''; return; }
+  u.lastLogin=new Date().toISOString(); u.logins=(u.logins||0)+1;
+  guardarUsuarios(users);
+  entrarAlCatalogo(u);
+}
+
+function hacerRegistro() {
+  var err   = document.getElementById('reg-error');
+  var name  = (document.getElementById('reg-name').value  || '').trim();
+  var phone = (document.getElementById('reg-phone').value || '').replace(/\D/g,'').trim();
+  var pass  = (document.getElementById('reg-pass').value  || '').trim();
+  var pass2 = (document.getElementById('reg-pass2').value || '').trim();
+  err.textContent = '';
+  if (!name||name.length<2)   { err.textContent='Escribe tu nombre'; return; }
+  if (!phone||phone.length<7) { err.textContent='Ingresa tu n\u00famero de tel\u00e9fono'; return; }
+  if (!pass||pass.length<4)   { err.textContent='M\u00ednimo 4 caracteres'; return; }
+  if (pass!==pass2)           { err.textContent='Las contrase\u00f1as no coinciden'; return; }
+  var users = cargarUsuarios();
+  if (users.find(function(u){ return u.phone===phone; })) { err.textContent='N\u00famero ya registrado. Inicia sesi\u00f3n'; return; }
+  var nuevo={id:Date.now(),name:name,phone:phone,passHash:btoa(pass),datetime:new Date().toISOString(),logins:0};
+  users.push(nuevo); guardarUsuarios(users); entrarAlCatalogo(nuevo);
+}
+
+function resetearCuenta() {
+  var phone=prompt('Ingresa tu n\u00famero para restablecer:');
+  if(!phone) return; phone=phone.replace(/\D/g,'');
+  var users=cargarUsuarios(); var idx=users.findIndex(function(u){return u.phone===phone;});
+  if(idx<0){alert('No encontr\u00e9 ese n\u00famero');return;}
+  users.splice(idx,1); guardarUsuarios(users); alert('Cuenta eliminada. Puedes registrarte de nuevo.');
+}
+
+function entrarAlCatalogo(usuario) {
+  localStorage.setItem('jersey_session', JSON.stringify({id:usuario.id,name:usuario.name,phone:usuario.phone,loginAt:new Date().toISOString()}));
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').style.display = '';
+  if (typeof initApp === 'function') initApp(usuario);
+}
+
+document.getElementById('si-pass').addEventListener('keydown',   function(e){ if(e.key==='Enter') hacerLogin(); });
+document.getElementById('si-phone').addEventListener('keydown',  function(e){ if(e.key==='Enter') hacerLogin(); });
+document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if(e.key==='Enter') hacerRegistro(); });
+
+// Restaurar sesion guardada
+(function(){
+  var s=localStorage.getItem('jersey_session');
+  if(s){ try{ var u=JSON.parse(s); if(u.phone===ADMIN_PHONE){entrarAlCatalogo(u);return;} var us=cargarUsuarios(); var ex=us.find(function(x){return x.phone===u.phone;}); if(ex){entrarAlCatalogo(ex);return;} }catch(e){} localStorage.removeItem('jersey_session'); }
+})();
+</script>
+
+<!-- ═══════════════════════ APP ════════════════════════ -->
+<div id="app">
+
+  <!-- Header -->
+  <header class="header">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <a class="header-brand" href="#" onclick="setCategory('all');return false">
+      <span class="logo">⚽</span>
+      <div><div class="brand-name" id="header-brand-name">Jersey Store</div><div class="brand-sub">Catálogo 2024-2026</div></div>
+    </a>
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar jerseys..." oninput="onSearch(this.value)"/>
+    </div>
+    <div class="header-actions">
+      <div class="header-user">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <span id="user-name-display" style="display:none"></span>
+      </div>
+      <button class="btn-sm btn-admin" id="admin-btn" style="display:none" onclick="openAdmin()">⚙ Admin</button>
+      <button class="btn-sm btn-cart" id="cart-btn" onclick="openCart()" style="position:relative">
+        🛒 <span id="cart-count" style="display:none;background:#e94560;color:#fff;border-radius:50%;padding:1px 6px;font-size:11px;font-weight:700;position:absolute;top:-6px;right:-6px">0</span>
+      </button>
+      <button class="btn-sm btn-logout" onclick="logout()">Salir</button>
+    </div>
+  </header>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-title">Categorías</div>
+      <div id="cat-list"></div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div onclick="openReviewsPage()" style="padding:10px 14px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">
+          ⭐ Ver todas las reseñas
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="main-header">
+        <div>
+          <div class="main-title" id="section-title">Todos los productos</div>
+          <div class="main-count" id="product-count"></div>
+        </div>
+        <select class="sort-select" onchange="onSort(this.value)">
+          <option value="default">Orden predeterminado</option>
+          <option value="name-asc">Nombre A→Z</option>
+          <option value="name-desc">Nombre Z→A</option>
+        </select>
+      </div>
+      <div class="products-grid" id="products-grid"></div>
+      <div class="pagination" id="pagination"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PRODUCT MODAL ════════════════════════ -->
+<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal-wrap">
+    <button class="modal-close" onclick="closeProductModal()">✕</button>
+    <div class="modal">
+      <img id="modal-img" src="" alt="" class="modal-img"/>
+      <div class="modal-body">
+        <div class="modal-cat" id="modal-cat"></div>
+        <div class="modal-name" id="modal-name"></div>
+        <div id="modal-avg-stars" style="margin-bottom:8px;font-size:15px;color:#f5a623"></div>
+        <div class="modal-desc" id="modal-desc"></div>
+        <div class="modal-price" id="modal-price"></div>
+        <button id="btn-add-cart" onclick="addToCart()" style="margin-top:14px;width:100%;background:#e94560;color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">🛒 Agregar al carrito</button>
+        <!-- RESEÑAS -->
+        <div style="margin-top:20px;border-top:1px solid #eee;padding-top:16px">
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px">💬 Opiniones</div>
+          <div id="reviews-list" style="max-height:220px;overflow-y:auto;margin-bottom:12px"></div>
+          <div id="review-form" style="display:none">
+            <div style="margin-bottom:8px;font-weight:600;font-size:13px">Tu calificación:</div>
+            <div id="star-picker" style="font-size:24px;cursor:pointer;margin-bottom:10px">
+              <span onclick="setStars(1)">☆</span>
+              <span onclick="setStars(2)">☆</span>
+              <span onclick="setStars(3)">☆</span>
+              <span onclick="setStars(4)">☆</span>
+              <span onclick="setStars(5)">☆</span>
+            </div>
+            <textarea id="review-text" placeholder="Escribe tu opinión..." rows="3"
+              style="width:100%;border:1.5px solid #ddd;border-radius:10px;padding:10px;font-size:13px;resize:none;box-sizing:border-box"></textarea>
+            <button onclick="submitReview()" style="margin-top:8px;background:#e94560;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-weight:700;cursor:pointer;width:100%">Publicar opinión</button>
+          </div>
+          <button id="btn-add-review" onclick="toggleReviewForm()" style="background:#f0f0f0;border:none;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer;font-size:13px;width:100%">✏️ Dejar opinión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ CART MODAL ════════════════════════ -->
+<div class="modal-overlay" id="cart-modal" onclick="closeCartModal(event)">
+  <div class="modal-wrap" style="max-width:520px">
+    <button class="modal-close" onclick="closeCartModal()">✕</button>
+    <div class="modal" style="padding:28px">
+      <div style="font-size:20px;font-weight:800;margin-bottom:20px">🛒 Mi carrito</div>
+      <div id="cart-items-list"></div>
+      <div id="cart-empty" style="text-align:center;padding:40px;color:#999;display:none">
+        <div style="font-size:40px">🛒</div>
+        <div style="margin-top:10px">Tu carrito está vacío</div>
+      </div>
+      <div id="cart-footer" style="display:none;margin-top:20px;border-top:1px solid #eee;padding-top:16px">
+        <div style="font-size:13px;color:#666;margin-bottom:14px">Al enviar, le llegará un mensaje de WhatsApp al vendedor con tu pedido.</div>
+        <button onclick="sendCartWA()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.555 4.122 1.524 5.855L0 24l6.29-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.655-.493-5.19-1.357l-.371-.22-3.738.895.942-3.629-.242-.378A9.954 9.954 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Enviar pedido por WhatsApp
+        </button>
+        <button onclick="clearCart()" style="width:100%;margin-top:10px;background:none;border:1.5px solid #ddd;border-radius:12px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;color:#666">🗑 Vaciar carrito</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ REVIEWS PAGE ════════════════════════ -->
+<div id="reviews-page" style="display:none;padding:24px;max-width:900px;margin:0 auto">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <button onclick="closePage('reviews-page')" style="background:none;border:none;font-size:22px;cursor:pointer">←</button>
+    <div style="font-size:22px;font-weight:800">⭐ Reseñas del catálogo</div>
+  </div>
+  <div id="reviews-page-list"></div>
+</div>
+
+<!-- ═══════════════════════ ADMIN PANEL ════════════════════════ -->
+<div id="admin-panel">
+  <div class="admin-header">
+    <div>
+      <div class="admin-title">⚙️ Panel de Administrador</div>
+      <div id="admin-session-info" style="font-size:12px;opacity:.8;margin-top:2px"></div>
+    </div>
+    <button class="admin-close" onclick="closeAdmin()">✕ Cerrar</button>
+  </div>
+  <div class="admin-body">
+    <div class="stats-grid" id="admin-stats"></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('users',this)">👥 Usuarios</button>
+      <button class="admin-tab" onclick="switchAdminTab('products',this)">🛍️ Productos</button>
+      <button class="admin-tab" onclick="switchAdminTab('add',this)">➕ Agregar</button>
+      <button class="admin-tab" onclick="switchAdminTab('categories',this)">🗂️ Categorías</button>
+      <button class="admin-tab" onclick="switchAdminTab('reviews',this)">⭐ Reseñas</button>
+      <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Config</button>
+    </div>
+
+    <!-- USERS TAB -->
+    <div class="admin-section active" id="admin-tab-users">
+      <div class="admin-card">
+        <div class="admin-card-title">Registro de accesos</div>
+        <div class="admin-search">
+          <input type="text" id="user-search" placeholder="Buscar por nombre o teléfono..." oninput="filterUsers(this.value)"/>
+          <button class="btn-primary" onclick="exportUsers()">📥 Exportar CSV</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Usuario</th>
+                <th>Teléfono</th>
+                <th>Contraseña</th>
+                <th>Registro</th>
+                <th>Último acceso</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="admin-section" id="admin-tab-products">
+      <div class="admin-card">
+        <div class="admin-card-title">Gestión de productos</div>
+        <div class="admin-search">
+          <input type="text" id="prod-search" placeholder="Buscar producto..." oninput="filterAdminProducts(this.value)"/>
+          <select id="prod-cat-filter" onchange="filterAdminProducts(document.getElementById('prod-search').value)">
+            <option value="">Todas las categorías</option>
+          </select>
+        </div>
+        <div class="product-admin-grid" id="admin-product-grid"></div>
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT TAB -->
+    <div class="admin-section" id="admin-tab-add">
+      <div class="admin-card">
+        <div class="admin-card-title">Agregar nuevo producto</div>
+        <div class="form-row">
+          <div class="field">
+            <label>Nombre del producto *</label>
+            <input type="text" id="np-name" placeholder="Ej: Jersey Atlas Local 25/26"/>
+          </div>
+          <div class="field">
+            <label>Categoría *</label>
+            <select id="np-cat"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Precio (opcional)</label>
+            <input type="text" id="np-price" placeholder="Ej: $350"/>
+          </div>
+          <div class="field">
+            <label>URL de imagen *</label>
+            <input type="text" id="np-img" placeholder="https://..."/>
+          </div>
+        </div>
+        <div class="form-row single">
+          <div class="field">
+            <label>Descripción (opcional)</label>
+            <textarea id="np-desc" placeholder="Talla, material, temporada..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <button class="btn-primary" onclick="addProduct()">➕ Agregar producto</button>
+          <button class="btn-secondary" onclick="clearAddForm()">Limpiar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES TAB -->
+    <div class="admin-section" id="admin-tab-categories">
+      <div class="admin-card">
+        <div class="admin-card-title">Gestión de categorías</div>
+        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+          <input type="text" id="new-cat-input" placeholder="Nueva categoría..." style="flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
+          <button class="btn-primary" onclick="addCategory()">Agregar</button>
+        </div>
+        <div id="categories-admin-list"></div>
+      </div>
+    </div>
+
+    <!-- CONFIG TAB -->
+    <div class="admin-section" id="admin-tab-config">
+      <div class="admin-card">
+        <div class="admin-card-title">⚙️ Configuración del sitio</div>
+        <div style="margin-bottom:24px">
+          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:8px">Nombre del sitio (aparece en el header y tab del navegador)</label>
+          <div style="display:flex;gap:10px">
+            <input type="text" id="cfg-site-name" placeholder="Ej: Jersey Store MX" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
+            <button class="btn-primary" onclick="saveSiteName()">Guardar</button>
+          </div>
+          <div id="cfg-name-msg" style="font-size:12px;margin-top:6px;color:#4ade80"></div>
+        </div>
+        <div class="admin-card-title" style="margin-top:8px">👑 Permisos de administrador</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Dar o quitar acceso de admin a usuarios registrados.</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <input type="text" id="cfg-admin-phone" placeholder="Teléfono del usuario (10 dígitos)" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
+          <button class="btn-primary" onclick="toggleAdminRole()">Cambiar rol</button>
+        </div>
+        <div id="cfg-admin-msg" style="font-size:13px;margin-bottom:16px;color:#4ade80"></div>
+        <div id="cfg-admins-list"></div>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div class="admin-section" id="admin-tab-reviews">
+      <div class="admin-card">
+        <div class="admin-card-title">⭐ Moderación de reseñas</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <input type="text" id="review-admin-search" placeholder="Buscar por producto o usuario..." oninput="renderAdminReviews()" style="flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
+          <button class="btn-secondary" onclick="deleteAllReviews()">🗑 Borrar todas</button>
+        </div>
+        <div id="admin-reviews-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="edit-modal-overlay" id="edit-modal" onclick="closeEditModal(event)">
+  <div class="edit-modal" onclick="event.stopPropagation()">
+    <div class="edit-modal-title">✏️ Editar producto</div>
+    <input type="hidden" id="ep-id"/>
+    <div class="form-row">
+      <div class="field">
+        <label>Nombre *</label>
+        <input type="text" id="ep-name"/>
+      </div>
+      <div class="field">
+        <label>Categoría</label>
+        <select id="ep-cat"></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Precio</label>
+        <input type="text" id="ep-price"/>
+      </div>
+      <div class="field">
+        <label>URL imagen</label>
+        <input type="text" id="ep-img"/>
+      </div>
+    </div>
+    <div class="form-row single">
+      <div class="field">
+        <label>Descripción</label>
+        <textarea id="ep-desc"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn-primary" onclick="saveEdit()">💾 Guardar</button>
+      <button class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="catalog.js"></script>
+
+
 <script>
 // Listeners de login via addEventListener (Enter en inputs)
 window.addEventListener('load', function(){
@@ -1585,395 +2028,6 @@ function deleteAllReviews() {
 
 
 </script>
-</head>
-<body>
-
-<script>
-function _doSignin() {
-  if (typeof doSignin === 'function') { doSignin(); }
-  else { setTimeout(_doSignin, 50); }
-}
-function _doRegister() {
-  if (typeof doRegister === 'function') { doRegister(); }
-  else { setTimeout(_doRegister, 50); }
-}
-function _switchTab(t) {
-  if (typeof switchLoginTab === 'function') { switchLoginTab(t); }
-  else { setTimeout(function(){ _switchTab(t); }, 50); }
-}
-</script>
-<!-- ═══════════════════════ LOGIN ═══════════════════════ -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">⚽</div>
-    <div class="login-brand" id="login-brand-text">Jersey Store</div>
-    <div class="login-sub">Catálogo exclusivo de jerseys</div>
-    <div class="login-tabs">
-      <button class="login-tab active" onclick="_switchTab('signin')">Iniciar sesión</button>
-      <button class="login-tab" onclick="_switchTab('register')">Registrarse</button>
-    </div>
-    <div id="panel-signin">
-      <div class="login-form-wrap">
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" id="si-phone" placeholder="10 dígitos" autocomplete="tel"/>
-        </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"/>
-        </div>
-        <div class="login-error" id="si-error"></div>
-        <div style="margin-top:16px">
-          <button type="button" class="login-btn" onclick="_doSignin()">Iniciar sesión →</button>
-        </div>
-      </div>
-      <div style="margin-top:14px;text-align:center">
-        <a href="#" onclick="(typeof resetMyAccount==='function')&&resetMyAccount();return false;" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
-      </div>
-    </div>
-    <div id="panel-register" style="display:none">
-      <div class="login-form-wrap">
-        <div class="form-group">
-          <label>Nombre completo</label>
-          <input type="text" id="reg-name" placeholder="Tu nombre" autocomplete="name"/>
-        </div>
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" id="reg-phone" placeholder="10 dígitos" autocomplete="tel"/>
-        </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="reg-pass" placeholder="Mínimo 4 caracteres" autocomplete="new-password"/>
-        </div>
-        <div class="form-group">
-          <label>Confirmar contraseña</label>
-          <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" autocomplete="new-password"/>
-        </div>
-        <div class="login-error" id="reg-error"></div>
-        <div style="margin-top:16px">
-          <button type="button" class="login-btn" onclick="_doRegister()">Crear cuenta →</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════ APP ════════════════════════ -->
-<div id="app">
-
-  <!-- Header -->
-  <header class="header">
-    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-    <a class="header-brand" href="#" onclick="setCategory('all');return false">
-      <span class="logo">⚽</span>
-      <div><div class="brand-name" id="header-brand-name">Jersey Store</div><div class="brand-sub">Catálogo 2024-2026</div></div>
-    </a>
-    <div class="header-search">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" placeholder="Buscar jerseys..." oninput="onSearch(this.value)"/>
-    </div>
-    <div class="header-actions">
-      <div class="header-user">
-        <div class="user-avatar" id="user-avatar">?</div>
-        <span id="user-name-display" style="display:none"></span>
-      </div>
-      <button class="btn-sm btn-admin" id="admin-btn" style="display:none" onclick="openAdmin()">⚙ Admin</button>
-      <button class="btn-sm btn-cart" id="cart-btn" onclick="openCart()" style="position:relative">
-        🛒 <span id="cart-count" style="display:none;background:#e94560;color:#fff;border-radius:50%;padding:1px 6px;font-size:11px;font-weight:700;position:absolute;top:-6px;right:-6px">0</span>
-      </button>
-      <button class="btn-sm btn-logout" onclick="logout()">Salir</button>
-    </div>
-  </header>
-
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-  <div class="layout">
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-title">Categorías</div>
-      <div id="cat-list"></div>
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-        <div onclick="openReviewsPage()" style="padding:10px 14px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">
-          ⭐ Ver todas las reseñas
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="main">
-      <div class="main-header">
-        <div>
-          <div class="main-title" id="section-title">Todos los productos</div>
-          <div class="main-count" id="product-count"></div>
-        </div>
-        <select class="sort-select" onchange="onSort(this.value)">
-          <option value="default">Orden predeterminado</option>
-          <option value="name-asc">Nombre A→Z</option>
-          <option value="name-desc">Nombre Z→A</option>
-        </select>
-      </div>
-      <div class="products-grid" id="products-grid"></div>
-      <div class="pagination" id="pagination"></div>
-    </main>
-  </div>
-</div>
-
-<!-- ═══════════════════════ PRODUCT MODAL ════════════════════════ -->
-<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
-  <div class="modal-wrap">
-    <button class="modal-close" onclick="closeProductModal()">✕</button>
-    <div class="modal">
-      <img id="modal-img" src="" alt="" class="modal-img"/>
-      <div class="modal-body">
-        <div class="modal-cat" id="modal-cat"></div>
-        <div class="modal-name" id="modal-name"></div>
-        <div id="modal-avg-stars" style="margin-bottom:8px;font-size:15px;color:#f5a623"></div>
-        <div class="modal-desc" id="modal-desc"></div>
-        <div class="modal-price" id="modal-price"></div>
-        <button id="btn-add-cart" onclick="addToCart()" style="margin-top:14px;width:100%;background:#e94560;color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">🛒 Agregar al carrito</button>
-        <!-- RESEÑAS -->
-        <div style="margin-top:20px;border-top:1px solid #eee;padding-top:16px">
-          <div style="font-weight:700;font-size:15px;margin-bottom:12px">💬 Opiniones</div>
-          <div id="reviews-list" style="max-height:220px;overflow-y:auto;margin-bottom:12px"></div>
-          <div id="review-form" style="display:none">
-            <div style="margin-bottom:8px;font-weight:600;font-size:13px">Tu calificación:</div>
-            <div id="star-picker" style="font-size:24px;cursor:pointer;margin-bottom:10px">
-              <span onclick="setStars(1)">☆</span>
-              <span onclick="setStars(2)">☆</span>
-              <span onclick="setStars(3)">☆</span>
-              <span onclick="setStars(4)">☆</span>
-              <span onclick="setStars(5)">☆</span>
-            </div>
-            <textarea id="review-text" placeholder="Escribe tu opinión..." rows="3"
-              style="width:100%;border:1.5px solid #ddd;border-radius:10px;padding:10px;font-size:13px;resize:none;box-sizing:border-box"></textarea>
-            <button onclick="submitReview()" style="margin-top:8px;background:#e94560;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-weight:700;cursor:pointer;width:100%">Publicar opinión</button>
-          </div>
-          <button id="btn-add-review" onclick="toggleReviewForm()" style="background:#f0f0f0;border:none;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer;font-size:13px;width:100%">✏️ Dejar opinión</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════ CART MODAL ════════════════════════ -->
-<div class="modal-overlay" id="cart-modal" onclick="closeCartModal(event)">
-  <div class="modal-wrap" style="max-width:520px">
-    <button class="modal-close" onclick="closeCartModal()">✕</button>
-    <div class="modal" style="padding:28px">
-      <div style="font-size:20px;font-weight:800;margin-bottom:20px">🛒 Mi carrito</div>
-      <div id="cart-items-list"></div>
-      <div id="cart-empty" style="text-align:center;padding:40px;color:#999;display:none">
-        <div style="font-size:40px">🛒</div>
-        <div style="margin-top:10px">Tu carrito está vacío</div>
-      </div>
-      <div id="cart-footer" style="display:none;margin-top:20px;border-top:1px solid #eee;padding-top:16px">
-        <div style="font-size:13px;color:#666;margin-bottom:14px">Al enviar, le llegará un mensaje de WhatsApp al vendedor con tu pedido.</div>
-        <button onclick="sendCartWA()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.555 4.122 1.524 5.855L0 24l6.29-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.655-.493-5.19-1.357l-.371-.22-3.738.895.942-3.629-.242-.378A9.954 9.954 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          Enviar pedido por WhatsApp
-        </button>
-        <button onclick="clearCart()" style="width:100%;margin-top:10px;background:none;border:1.5px solid #ddd;border-radius:12px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;color:#666">🗑 Vaciar carrito</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════ REVIEWS PAGE ════════════════════════ -->
-<div id="reviews-page" style="display:none;padding:24px;max-width:900px;margin:0 auto">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-    <button onclick="closePage('reviews-page')" style="background:none;border:none;font-size:22px;cursor:pointer">←</button>
-    <div style="font-size:22px;font-weight:800">⭐ Reseñas del catálogo</div>
-  </div>
-  <div id="reviews-page-list"></div>
-</div>
-
-<!-- ═══════════════════════ ADMIN PANEL ════════════════════════ -->
-<div id="admin-panel">
-  <div class="admin-header">
-    <div>
-      <div class="admin-title">⚙️ Panel de Administrador</div>
-      <div id="admin-session-info" style="font-size:12px;opacity:.8;margin-top:2px"></div>
-    </div>
-    <button class="admin-close" onclick="closeAdmin()">✕ Cerrar</button>
-  </div>
-  <div class="admin-body">
-    <div class="stats-grid" id="admin-stats"></div>
-    <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('users',this)">👥 Usuarios</button>
-      <button class="admin-tab" onclick="switchAdminTab('products',this)">🛍️ Productos</button>
-      <button class="admin-tab" onclick="switchAdminTab('add',this)">➕ Agregar</button>
-      <button class="admin-tab" onclick="switchAdminTab('categories',this)">🗂️ Categorías</button>
-      <button class="admin-tab" onclick="switchAdminTab('reviews',this)">⭐ Reseñas</button>
-      <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Config</button>
-    </div>
-
-    <!-- USERS TAB -->
-    <div class="admin-section active" id="admin-tab-users">
-      <div class="admin-card">
-        <div class="admin-card-title">Registro de accesos</div>
-        <div class="admin-search">
-          <input type="text" id="user-search" placeholder="Buscar por nombre o teléfono..." oninput="filterUsers(this.value)"/>
-          <button class="btn-primary" onclick="exportUsers()">📥 Exportar CSV</button>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Usuario</th>
-                <th>Teléfono</th>
-                <th>Contraseña</th>
-                <th>Registro</th>
-                <th>Último acceso</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="users-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCTS TAB -->
-    <div class="admin-section" id="admin-tab-products">
-      <div class="admin-card">
-        <div class="admin-card-title">Gestión de productos</div>
-        <div class="admin-search">
-          <input type="text" id="prod-search" placeholder="Buscar producto..." oninput="filterAdminProducts(this.value)"/>
-          <select id="prod-cat-filter" onchange="filterAdminProducts(document.getElementById('prod-search').value)">
-            <option value="">Todas las categorías</option>
-          </select>
-        </div>
-        <div class="product-admin-grid" id="admin-product-grid"></div>
-      </div>
-    </div>
-
-    <!-- ADD PRODUCT TAB -->
-    <div class="admin-section" id="admin-tab-add">
-      <div class="admin-card">
-        <div class="admin-card-title">Agregar nuevo producto</div>
-        <div class="form-row">
-          <div class="field">
-            <label>Nombre del producto *</label>
-            <input type="text" id="np-name" placeholder="Ej: Jersey Atlas Local 25/26"/>
-          </div>
-          <div class="field">
-            <label>Categoría *</label>
-            <select id="np-cat"></select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label>Precio (opcional)</label>
-            <input type="text" id="np-price" placeholder="Ej: $350"/>
-          </div>
-          <div class="field">
-            <label>URL de imagen *</label>
-            <input type="text" id="np-img" placeholder="https://..."/>
-          </div>
-        </div>
-        <div class="form-row single">
-          <div class="field">
-            <label>Descripción (opcional)</label>
-            <textarea id="np-desc" placeholder="Talla, material, temporada..."></textarea>
-          </div>
-        </div>
-        <div style="display:flex;gap:12px">
-          <button class="btn-primary" onclick="addProduct()">➕ Agregar producto</button>
-          <button class="btn-secondary" onclick="clearAddForm()">Limpiar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CATEGORIES TAB -->
-    <div class="admin-section" id="admin-tab-categories">
-      <div class="admin-card">
-        <div class="admin-card-title">Gestión de categorías</div>
-        <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
-          <input type="text" id="new-cat-input" placeholder="Nueva categoría..." style="flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
-          <button class="btn-primary" onclick="addCategory()">Agregar</button>
-        </div>
-        <div id="categories-admin-list"></div>
-      </div>
-    </div>
-
-    <!-- CONFIG TAB -->
-    <div class="admin-section" id="admin-tab-config">
-      <div class="admin-card">
-        <div class="admin-card-title">⚙️ Configuración del sitio</div>
-        <div style="margin-bottom:24px">
-          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:8px">Nombre del sitio (aparece en el header y tab del navegador)</label>
-          <div style="display:flex;gap:10px">
-            <input type="text" id="cfg-site-name" placeholder="Ej: Jersey Store MX" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
-            <button class="btn-primary" onclick="saveSiteName()">Guardar</button>
-          </div>
-          <div id="cfg-name-msg" style="font-size:12px;margin-top:6px;color:#4ade80"></div>
-        </div>
-        <div class="admin-card-title" style="margin-top:8px">👑 Permisos de administrador</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Dar o quitar acceso de admin a usuarios registrados.</p>
-        <div style="display:flex;gap:10px;margin-bottom:16px">
-          <input type="text" id="cfg-admin-phone" placeholder="Teléfono del usuario (10 dígitos)" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
-          <button class="btn-primary" onclick="toggleAdminRole()">Cambiar rol</button>
-        </div>
-        <div id="cfg-admin-msg" style="font-size:13px;margin-bottom:16px;color:#4ade80"></div>
-        <div id="cfg-admins-list"></div>
-      </div>
-    </div>
-
-    <!-- REVIEWS TAB -->
-    <div class="admin-section" id="admin-tab-reviews">
-      <div class="admin-card">
-        <div class="admin-card-title">⭐ Moderación de reseñas</div>
-        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-          <input type="text" id="review-admin-search" placeholder="Buscar por producto o usuario..." oninput="renderAdminReviews()" style="flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
-          <button class="btn-secondary" onclick="deleteAllReviews()">🗑 Borrar todas</button>
-        </div>
-        <div id="admin-reviews-list"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT MODAL -->
-<div class="edit-modal-overlay" id="edit-modal" onclick="closeEditModal(event)">
-  <div class="edit-modal" onclick="event.stopPropagation()">
-    <div class="edit-modal-title">✏️ Editar producto</div>
-    <input type="hidden" id="ep-id"/>
-    <div class="form-row">
-      <div class="field">
-        <label>Nombre *</label>
-        <input type="text" id="ep-name"/>
-      </div>
-      <div class="field">
-        <label>Categoría</label>
-        <select id="ep-cat"></select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="field">
-        <label>Precio</label>
-        <input type="text" id="ep-price"/>
-      </div>
-      <div class="field">
-        <label>URL imagen</label>
-        <input type="text" id="ep-img"/>
-      </div>
-    </div>
-    <div class="form-row single">
-      <div class="field">
-        <label>Descripción</label>
-        <textarea id="ep-desc"></textarea>
-      </div>
-    </div>
-    <div style="display:flex;gap:12px;margin-top:8px">
-      <button class="btn-primary" onclick="saveEdit()">💾 Guardar</button>
-      <button class="btn-secondary" onclick="closeEditModal()">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script src="catalog.js"></script>
 </body>
-</html
+</html>
