@@ -198,10 +198,19 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-h
 
 <script>
 var ADMIN_PHONE = '3343745531';
-var ADMIN_PASS  = '125670Carlos';
+var ADMIN_PASS_HASH = 'd9e25aece924706b96f77d256524df4d3ac83c70b1b0c84c5ee7763a269151b4';
 var ADMIN_NAME  = 'Carlos Adrian Luevano Alatorre';
 var WA_NUMBER   = '523343745531';
 var currentStar = 0;
+var currentSess = null;
+
+// SHA-256 hashing (Web Crypto API) - nunca guardar contrasenas en texto plano
+async function sha256(str){
+  var buf=new TextEncoder().encode(str);
+  var hash=await crypto.subtle.digest('SHA-256',buf);
+  return Array.from(new Uint8Array(hash)).map(function(b){return ('0'+b.toString(16)).slice(-2);}).join('');
+}
+
 var currentSess = null;
 
 var CATALOG = [
@@ -350,27 +359,35 @@ function showTab(t){
 }
 
 // LOGIN
-function doLogin(){
+async function doLogin(){
   var ph = (document.getElementById('lph').value||'').trim();
   var ps = (document.getElementById('lps').value||'').trim();
   var err = document.getElementById('login-err');
   err.textContent='';
   if(ph.length<7){ err.textContent='Ingresa tu telefono.'; return; }
   if(!ps){ err.textContent='Ingresa tu contrasena.'; return; }
+  var hash = await sha256(ps);
   if(ph===ADMIN_PHONE){
-    if(ps!==ADMIN_PASS){ err.textContent='Contrasena incorrecta.'; return; }
+    if(hash!==ADMIN_PASS_HASH){ err.textContent='Contrasena incorrecta.'; return; }
     var s={phone:ADMIN_PHONE,name:ADMIN_NAME,role:'admin'};
     setSession(s); enterApp(s); return;
   }
   var users=loadUsers();
   if(!users[ph]){ err.textContent='Numero no registrado. Usa Registrarme.'; return; }
-  if(users[ph].pass!==ps){ err.textContent='Contrasena incorrecta.'; return; }
-  var s={phone:ph,name:users[ph].name,role:'user'};
+  if(users[ph].pass!==hash){
+    if(users[ph].pass.length<64 && users[ph].pass===ps){
+      users[ph].pass=hash; saveUsers(users);
+      var s2={phone:ph,name:users[ph].name,role:users[ph].role||'user'};
+      setSession(s2); enterApp(s2); return;
+    }
+    err.textContent='Contrasena incorrecta.'; return;
+  }
+  var s={phone:ph,name:users[ph].name,role:users[ph].role||'user'};
   setSession(s); enterApp(s);
 }
 
 // REGISTRO
-function doRegister(){
+async function doRegister(){
   var n  = (document.getElementById('rn').value||'').trim();
   var ph = (document.getElementById('rph').value||'').trim();
   var ps = (document.getElementById('rps').value||'').trim();
@@ -382,7 +399,8 @@ function doRegister(){
   if(ph===ADMIN_PHONE){ err.textContent='Numero no disponible.'; return; }
   var users=loadUsers();
   if(users[ph]){ err.textContent='Ya existe cuenta con ese numero.'; return; }
-  users[ph]={name:n,pass:ps,ts:new Date().toISOString()};
+  var hash = await sha256(ps);
+  users[ph]={name:n,pass:hash,role:'user',ts:new Date().toISOString()};
   saveUsers(users);
   var s={phone:ph,name:n,role:'user'};
   setSession(s); enterApp(s);
@@ -395,7 +413,7 @@ function enterApp(s){
   document.getElementById('app').style.display='block';
   document.getElementById('hdr-name').textContent=s.name;
   document.getElementById('hdr-role').textContent=s.role==='admin'?'Administrador':'Cliente';
-  if(s.role==='admin') document.getElementById('btn-adm').style.display='';
+  document.getElementById('btn-adm').style.display = s.role==='admin' ? '' : 'none';
   renderCatalog();
   renderPublicReviews();
 }
@@ -504,26 +522,63 @@ function switchAdminTab(tab){
 function renderAdminUsers(){
   var users=loadUsers();
   var keys=Object.keys(users);
-  if(keys.length===0){ document.getElementById('at-users').innerHTML='<div class="empty-msg">Sin usuarios registrados.</div>'; return; }
-  var html='<div style="font-size:12px;color:#666;margin-bottom:12px">'+keys.length+' usuarios registrados</div>';
+  var isSuper = currentSess && currentSess.phone===ADMIN_PHONE;
+  var html='<div style="font-size:12px;color:#666;margin-bottom:12px">Administrador principal + '+keys.length+' usuarios</div>';
+  html+='<div class="a-row" style="border:1px solid #e63946">'+
+    '<div class="a-row-info">'+
+      '<div class="an">'+ADMIN_NAME+'</div>'+
+      '<div class="as">Tel: '+ADMIN_PHONE+'</div>'+
+      '<div class="ap" style="color:#e63946">Rol: admin (principal)</div>'+
+    '</div>'+
+  '</div>';
+  if(keys.length===0){ document.getElementById('at-users').innerHTML=html+'<div class="empty-msg">Sin usuarios registrados.</div>'; return; }
   keys.forEach(function(ph){
     var u=users[ph];
     var fecha=u.ts?new Date(u.ts).toLocaleDateString('es-MX',{year:'numeric',month:'short',day:'numeric'}):'';
+    var role=u.role||'user';
+    var roleLabel=role==='admin'?'admin':'cliente';
+    var roleColor=role==='admin'?'#e63946':'#888';
     html+='<div class="a-row">'+
       '<div class="a-row-info">'+
         '<div class="an">'+u.name+'</div>'+
         '<div class="as">Tel: '+ph+' | Registro: '+fecha+'</div>'+
-        '<div class="ap">Pass: '+u.pass+'</div>'+
-      '</div>'+
-      "<button class=\"btn-del\" onclick=\"deleteUser('"+ph+"')\">Eliminar</button>"+
-    '</div>';
+        '<div class="ap" style="color:'+roleColor+'">Rol: '+roleLabel+'</div>'+
+      '</div>';
+    if(isSuper){
+      if(role==='admin'){
+        html+="<button class=\"btn-del\" style=\"background:#5a3a00\" onclick=\"demoteUser('"+ph+"')\">Quitar admin</button>";
+      } else {
+        html+="<button class=\"btn-del\" style=\"background:#1a5a1a\" onclick=\"promoteUser('"+ph+"')\">Hacer admin</button>";
+      }
+      html+="<button class=\"btn-del\" onclick=\"deleteUser('"+ph+"')\">Eliminar</button>";
+    }
+    html+='</div>';
   });
   document.getElementById('at-users').innerHTML=html;
 }
 
 function deleteUser(ph){
+  if(!currentSess || currentSess.phone!==ADMIN_PHONE){ alert('Solo el administrador principal puede eliminar usuarios.'); return; }
   if(!confirm('Eliminar usuario '+ph+'?')) return;
   var users=loadUsers(); delete users[ph]; saveUsers(users); renderAdminUsers();
+}
+
+function promoteUser(ph){
+  if(!currentSess || currentSess.phone!==ADMIN_PHONE){ alert('Solo el administrador principal puede cambiar roles.'); return; }
+  var users=loadUsers();
+  if(!users[ph]) return;
+  users[ph].role='admin';
+  saveUsers(users);
+  renderAdminUsers();
+}
+
+function demoteUser(ph){
+  if(!currentSess || currentSess.phone!==ADMIN_PHONE){ alert('Solo el administrador principal puede cambiar roles.'); return; }
+  var users=loadUsers();
+  if(!users[ph]) return;
+  users[ph].role='user';
+  saveUsers(users);
+  renderAdminUsers();
 }
 
 function renderAdminOrders(){
