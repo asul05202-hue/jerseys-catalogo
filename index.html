@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Catálogo de Jerseys - Encuentra tu jersey favorito"/>
 <title>Catálogo de Jerseys</title>
 <style>
 /* ── Reset & Base ─────────────────────────────── */
@@ -44,43 +44,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   backdrop-filter:blur(20px);
   border:1px solid rgba(255,255,255,.15);
   border-radius:24px;
-  padding:40px 36px;
-  width:min(420px,92vw);
+  padding:48px 40px;
+  width:min(420px,90vw);
   box-shadow:0 25px 60px rgba(0,0,0,.4);
   text-align:center;
 }
-.login-logo{font-size:48px;margin-bottom:6px}
-.login-brand{color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
-.login-sub{color:rgba(255,255,255,.6);font-size:14px;margin-bottom:24px}
-/* Tabs */
-.login-tabs{display:flex;background:rgba(255,255,255,.08);border-radius:12px;padding:4px;margin-bottom:24px;gap:4px}
-.login-tab{flex:1;padding:10px;border:none;background:transparent;color:rgba(255,255,255,.5);font-size:14px;font-weight:600;border-radius:9px;cursor:pointer;transition:all .2s}
-.login-tab.active{background:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(233,69,96,.4)}
-/* Form */
-.form-group{margin-bottom:16px;text-align:left}
-.form-group label{display:block;color:rgba(255,255,255,.7);font-size:12px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.login-logo{font-size:48px;margin-bottom:8px}
+.login-brand{color:#fff;font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px}
+.login-sub{color:rgba(255,255,255,.6);font-size:14px;margin-bottom:36px}
+.form-group{margin-bottom:18px;text-align:left}
+.form-group label{display:block;color:rgba(255,255,255,.8);font-size:13px;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
 .form-group input{
-  width:100%;padding:13px 16px;
+  width:100%;padding:14px 18px;
   background:rgba(255,255,255,.1);
   border:1px solid rgba(255,255,255,.2);
   border-radius:10px;
   color:#fff;font-size:15px;
   transition:all .2s;
-  outline:none;box-sizing:border-box;
+  outline:none;
 }
-.form-group input::placeholder{color:rgba(255,255,255,.35)}
+.form-group input::placeholder{color:rgba(255,255,255,.4)}
 .form-group input:focus{background:rgba(255,255,255,.15);border-color:var(--accent);box-shadow:0 0 0 3px rgba(233,69,96,.2)}
 .login-btn{
-  width:100%;padding:14px;
+  width:100%;padding:15px;
   background:linear-gradient(135deg,var(--accent),#c0392b);
   color:#fff;border:none;border-radius:10px;
   font-size:16px;font-weight:700;cursor:pointer;
-  transition:all .2s;margin-top:4px;
+  transition:all .2s;margin-top:8px;
 }
 .login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(233,69,96,.4)}
 .login-btn:active{transform:translateY(0)}
-.login-error{color:#ff6b6b;font-size:13px;margin-top:8px;min-height:18px}
-.login-note{color:rgba(255,255,255,.35);font-size:11px;margin-top:16px;line-height:1.6}
+.login-error{color:#ff6b6b;font-size:13px;margin-top:10px;min-height:20px}
+.login-note{color:rgba(255,255,255,.4);font-size:12px;margin-top:24px;line-height:1.6}
 
 /* ── HEADER ───────────────────────────────────── */
 #app{display:none}
@@ -452,127 +447,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </head>
 <body>
 
-<script>
-var ADMIN_PHONE = '3343745531';
-var ADMIN_PASS  = '125670Carlos';
-var ADMIN_NAME  = 'Carlos Adrian Luevano Alatorre';
-
-function showTab(tab) {
-  document.getElementById('panel-signin').style.display    = tab==='signin'   ? '' : 'none';
-  document.getElementById('panel-register').style.display  = tab==='register' ? '' : 'none';
-  document.getElementById('tab-btn-signin').classList.toggle('active',   tab==='signin');
-  document.getElementById('tab-btn-register').classList.toggle('active', tab==='register');
-}
-
-function cargarUsuarios() {
-  try { return JSON.parse(localStorage.getItem('jersey_users') || '[]'); } catch(e) { return []; }
-}
-function guardarUsuarios(arr) { localStorage.setItem('jersey_users', JSON.stringify(arr)); }
-
-function hacerLogin() {
-  var err   = document.getElementById('si-error');
-  var phone = (document.getElementById('si-phone').value || '').replace(/\D/g,'').trim();
-  var pass  = (document.getElementById('si-pass').value  || '').trim();
-  err.textContent = '';
-  if (!phone || phone.length < 7) { err.textContent = 'Ingresa tu n\u00famero de tel\u00e9fono'; return; }
-  if (!pass  || pass.length  < 3) { err.textContent = 'Ingresa tu contrase\u00f1a';            return; }
-  if (phone === ADMIN_PHONE) {
-    if (pass !== ADMIN_PASS) { err.textContent = 'Contrase\u00f1a incorrecta'; return; }
-    var users = cargarUsuarios();
-    var adm   = users.find(function(u){ return u.phone===phone; });
-    if (!adm) { adm={id:Date.now(),name:ADMIN_NAME,phone:phone,passHash:btoa(pass),datetime:new Date().toISOString(),logins:0}; users.unshift(adm); }
-    else       { adm.lastLogin=new Date().toISOString(); adm.logins=(adm.logins||0)+1; }
-    guardarUsuarios(users);
-    entrarAlCatalogo(adm);
-    return;
-  }
-  var users = cargarUsuarios();
-  var u = users.find(function(x){ return x.phone===phone; });
-  if (!u)                                      { err.textContent = 'No encontr\u00e9 esa cuenta. Reg\u00edstrate primero'; return; }
-  if (u.passHash && u.passHash!==btoa(pass))   { err.textContent = 'Contrase\u00f1a incorrecta'; document.getElementById('si-pass').value=''; return; }
-  u.lastLogin=new Date().toISOString(); u.logins=(u.logins||0)+1;
-  guardarUsuarios(users);
-  entrarAlCatalogo(u);
-}
-
-function hacerRegistro() {
-  var err   = document.getElementById('reg-error');
-  var name  = (document.getElementById('reg-name').value  || '').trim();
-  var phone = (document.getElementById('reg-phone').value || '').replace(/\D/g,'').trim();
-  var pass  = (document.getElementById('reg-pass').value  || '').trim();
-  var pass2 = (document.getElementById('reg-pass2').value || '').trim();
-  err.textContent = '';
-  if (!name||name.length<2)   { err.textContent='Escribe tu nombre'; return; }
-  if (!phone||phone.length<7) { err.textContent='Ingresa tu n\u00famero de tel\u00e9fono'; return; }
-  if (!pass||pass.length<4)   { err.textContent='M\u00ednimo 4 caracteres'; return; }
-  if (pass!==pass2)           { err.textContent='Las contrase\u00f1as no coinciden'; return; }
-  var users = cargarUsuarios();
-  if (users.find(function(u){ return u.phone===phone; })) { err.textContent='N\u00famero ya registrado. Inicia sesi\u00f3n'; return; }
-  var nuevo={id:Date.now(),name:name,phone:phone,passHash:btoa(pass),datetime:new Date().toISOString(),logins:0};
-  users.push(nuevo); guardarUsuarios(users); entrarAlCatalogo(nuevo);
-}
-
-function resetearCuenta() {
-  var phone=prompt('Ingresa tu n\u00famero para restablecer:');
-  if(!phone) return; phone=phone.replace(/\D/g,'');
-  var users=cargarUsuarios(); var idx=users.findIndex(function(u){return u.phone===phone;});
-  if(idx<0){alert('No encontr\u00e9 ese n\u00famero');return;}
-  users.splice(idx,1); guardarUsuarios(users); alert('Cuenta eliminada. Puedes registrarte de nuevo.');
-}
-
-function entrarAlCatalogo(usuario) {
-  localStorage.setItem('jersey_session', JSON.stringify({id:usuario.id,name:usuario.name,phone:usuario.phone,loginAt:new Date().toISOString()}));
-  document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('app').classList.add('visible');
-  window._pendingUser = usuario;
-  if (typeof window.onUserLoggedIn === 'function') window.onUserLoggedIn(usuario);
-}
-
-// Listeners y restaurar sesion — se ejecutan cuando el DOM esta listo
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('si-pass').addEventListener('keydown',   function(e){ if(e.key==='Enter') hacerLogin(); });
-  document.getElementById('si-phone').addEventListener('keydown',  function(e){ if(e.key==='Enter') hacerLogin(); });
-  document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if(e.key==='Enter') hacerRegistro(); });
-  // Restaurar sesion guardada
-  var s=localStorage.getItem('jersey_session');
-  if(s){ try{ var u=JSON.parse(s); if(u.phone===ADMIN_PHONE){entrarAlCatalogo(u);return;} var us=cargarUsuarios(); var ex=us.find(function(x){return x.phone===u.phone;}); if(ex){entrarAlCatalogo(ex);return;} }catch(e){} localStorage.removeItem('jersey_session'); }
-});
-</script>
-
-<!-- LOGIN -->
+<!-- ═══════════════════════ LOGIN ═══════════════════════ -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">⚽</div>
-    <div class="login-brand" id="login-brand-text">Jersey Store</div>
-    <div class="login-sub">Catálogo exclusivo de jerseys</div>
-    <div class="login-tabs">
-      <button class="login-tab active" id="tab-btn-signin"   onclick="showTab('signin')">Iniciar sesión</button>
-      <button class="login-tab"        id="tab-btn-register" onclick="showTab('register')">Registrarse</button>
-    </div>
-    <div id="panel-signin">
-      <div class="login-form-wrap">
-        <div class="form-group"><label>Teléfono</label><input type="tel" id="si-phone" placeholder="10 dígitos" autocomplete="tel"></div>
-        <div class="form-group"><label>Contraseña</label><input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"></div>
-        <div class="login-error" id="si-error"></div>
-        <div style="margin-top:16px"><button type="button" class="login-btn" onclick="hacerLogin()">Iniciar sesión →</button></div>
+    <div class="login-brand">Jersey Store</div>
+    <div class="login-sub" id="login-subtitle">Catálogo exclusivo de jerseys</div>
+
+    <form id="login-form" onsubmit="doLogin();return false;" autocomplete="off">
+      <div class="form-group" id="fg-name">
+        <label for="login-name">Nombre completo</label>
+        <input type="text" id="login-name" placeholder="Tu nombre completo" autocomplete="name"/>
       </div>
-      <div style="margin-top:14px;text-align:center">
-        <a href="#" onclick="resetearCuenta();return false;" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer</a>
+      <div class="form-group">
+        <label for="login-phone">Número de teléfono</label>
+        <input type="tel" id="login-phone" placeholder="10 dígitos" autocomplete="tel" oninput="checkPhoneExists()" onchange="checkPhoneExists()"/>
       </div>
-    </div>
-    <div id="panel-register" style="display:none">
-      <div class="login-form-wrap">
-        <div class="form-group"><label>Nombre completo</label><input type="text"     id="reg-name"  placeholder="Tu nombre"             autocomplete="name"></div>
-        <div class="form-group"><label>Teléfono</label>         <input type="tel"      id="reg-phone" placeholder="10 dígitos"          autocomplete="tel"></div>
-        <div class="form-group"><label>Contraseña</label>       <input type="password" id="reg-pass"  placeholder="Mínimo 4 caracteres"  autocomplete="new-password"></div>
-        <div class="form-group"><label>Confirmar</label>             <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" autocomplete="new-password"></div>
-        <div class="login-error" id="reg-error"></div>
-        <div style="margin-top:16px"><button type="button" class="login-btn" onclick="hacerRegistro()">Crear cuenta →</button></div>
+      <div class="form-group">
+        <label for="login-pass">Contraseña</label>
+        <input type="password" id="login-pass" placeholder="Mínimo 4 caracteres" autocomplete="current-password"/>
       </div>
-    </div>
+      <div class="form-group" id="fg-pass2" style="display:none">
+        <label for="login-pass2">Confirmar contraseña</label>
+        <input type="password" id="login-pass2" placeholder="Repite tu contraseña" autocomplete="new-password"/>
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <button type="submit" class="login-btn" id="login-btn-main">Entrar al catálogo →</button>
+    </form>
+    <div class="login-note" id="login-note">Ingresa tu teléfono para continuar</div>
+    <div style="margin-top:12px;text-align:center"><a href="#" onclick="resetMyAccount();return false" style="color:rgba(255,255,255,.35);font-size:11px;text-decoration:none">¿Problemas para entrar? Restablecer cuenta</a></div>
   </div>
 </div>
-
 
 <!-- ═══════════════════════ APP ════════════════════════ -->
 <div id="app">
@@ -582,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
     <a class="header-brand" href="#" onclick="setCategory('all');return false">
       <span class="logo">⚽</span>
-      <div><div class="brand-name" id="header-brand-name">Jersey Store</div><div class="brand-sub">Catálogo 2024-2026</div></div>
+      <div><div class="brand-name">Jersey Store</div><div class="brand-sub">Catálogo 2024-2026</div></div>
     </a>
     <div class="header-search">
       <span class="search-icon">🔍</span>
@@ -720,7 +625,6 @@ document.addEventListener('DOMContentLoaded', function() {
       <button class="admin-tab" onclick="switchAdminTab('add',this)">➕ Agregar</button>
       <button class="admin-tab" onclick="switchAdminTab('categories',this)">🗂️ Categorías</button>
       <button class="admin-tab" onclick="switchAdminTab('reviews',this)">⭐ Reseñas</button>
-      <button class="admin-tab" onclick="switchAdminTab('config',this)">⚙️ Config</button>
     </div>
 
     <!-- USERS TAB -->
@@ -813,29 +717,6 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
 
-    <!-- CONFIG TAB -->
-    <div class="admin-section" id="admin-tab-config">
-      <div class="admin-card">
-        <div class="admin-card-title">⚙️ Configuración del sitio</div>
-        <div style="margin-bottom:24px">
-          <label style="display:block;font-size:13px;font-weight:600;margin-bottom:8px">Nombre del sitio (aparece en el header y tab del navegador)</label>
-          <div style="display:flex;gap:10px">
-            <input type="text" id="cfg-site-name" placeholder="Ej: Jersey Store MX" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
-            <button class="btn-primary" onclick="saveSiteName()">Guardar</button>
-          </div>
-          <div id="cfg-name-msg" style="font-size:12px;margin-top:6px;color:#4ade80"></div>
-        </div>
-        <div class="admin-card-title" style="margin-top:8px">👑 Permisos de administrador</div>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Dar o quitar acceso de admin a usuarios registrados.</p>
-        <div style="display:flex;gap:10px;margin-bottom:16px">
-          <input type="text" id="cfg-admin-phone" placeholder="Teléfono del usuario (10 dígitos)" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none"/>
-          <button class="btn-primary" onclick="toggleAdminRole()">Cambiar rol</button>
-        </div>
-        <div id="cfg-admin-msg" style="font-size:13px;margin-bottom:16px;color:#4ade80"></div>
-        <div id="cfg-admins-list"></div>
-      </div>
-    </div>
-
     <!-- REVIEWS TAB -->
     <div class="admin-section" id="admin-tab-reviews">
       <div class="admin-card">
@@ -890,26 +771,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class="toast" id="toast"></div>
 
+<script src="catalog.js"></script>
 
 <script>
-// Listeners de login via addEventListener (Enter en inputs)
-console.log('[SCRIPT-MAIN] inicio del script principal');
-window.addEventListener('load', function(){
-  console.log('[LOAD] window load fired');
-  try{ initApp(); }catch(e){ console.error('initApp error:',e); }
-  var savedName = localStorage.getItem('jersey_site_name');
-  if (savedName) applySiteName(savedName);
-  // Auto-login si viene de test
-  var alp = localStorage.getItem('jersey_autologin_phone');
-  var alx = localStorage.getItem('jersey_autologin_pass');
-  if (alp && alx) {
-    localStorage.removeItem('jersey_autologin_phone');
-    localStorage.removeItem('jersey_autologin_pass');
-    document.getElementById('si-phone').value = alp;
-    document.getElementById('si-pass').value = alx;
-    setTimeout(function(){ _doSignin(); }, 300);
-  }
-});
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+// CATALOG_SEED se carga desde catalog.js (antes de este script)
+const ADMIN_PASS = '125670Carlos';
+const ADMIN_NAME = 'Carlos Adrian Luevano Alatorre';
+const ADMIN_PHONE = '3343745531';
+const WA_NUMBER = '523343745531'; // WhatsApp del negocio (recibe pedidos)
 
 // ═══════════════════════════════════════════════════════
 // STATE
@@ -1014,84 +886,127 @@ function saveCategories(cats) {
 }
 
 // ═══════════════════════════════════════════════════════
-// LOGIN (tabs: Iniciar sesión / Registrarse)
+// LOGIN
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// LOGIN CON CONTRASEÑA
+// ═══════════════════════════════════════════════════════
+let _loginIsNew = false; // true = primer registro
 
-function switchLoginTab(tab) {
-  document.getElementById('tab-signin').classList.toggle('active', tab==='signin');
-  document.getElementById('tab-register').classList.toggle('active', tab==='register');
-  document.getElementById('panel-signin').style.display   = tab==='signin'   ? '' : 'none';
-  document.getElementById('panel-register').style.display = tab==='register' ? '' : 'none';
+function checkPhoneExists() {
+  const phone = document.getElementById('login-phone').value.trim().replace(/\D/g,'');
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (phone.length < 7) {
+    document.getElementById('fg-name').style.display = '';
+    document.getElementById('fg-pass2').style.display = 'none';
+    document.getElementById('login-note').textContent = 'Ingresa tu teléfono para continuar';
+    document.getElementById('login-btn-main').textContent = 'Entrar al catálogo →';
+    return;
+  }
+  const isAdmin = (phone === ADMIN_PHONE);
+  if (isAdmin) {
+    // Admin: solo contraseña, sin nombre ni confirmar
+    document.getElementById('fg-name').style.display = 'none';
+    document.getElementById('fg-pass2').style.display = 'none';
+    document.getElementById('login-note').textContent = 'Panel de administrador';
+    document.getElementById('login-btn-main').textContent = 'Entrar →';
+    document.getElementById('login-pass').focus();
+    return;
+  }
+  const users = loadUsers();
+  const existing = users.find(u => u.phone === phone);
+  if (existing) {
+    document.getElementById('fg-name').style.display = 'none';
+    document.getElementById('fg-pass2').style.display = 'none';
+    document.getElementById('login-note').textContent = 'Bienvenido de vuelta, ' + existing.name.split(' ')[0] + ' 👋';
+    document.getElementById('login-btn-main').textContent = 'Entrar →';
+    document.getElementById('login-pass').focus();
+  } else {
+    document.getElementById('fg-name').style.display = '';
+    document.getElementById('fg-pass2').style.display = '';
+    document.getElementById('login-note').textContent = 'Crea tu contraseña para acceder';
+    document.getElementById('login-btn-main').textContent = 'Crear cuenta →';
+  }
 }
 
-function doSignin() {
-  var errEl = document.getElementById('si-error');
-  var phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
-  var pass  = document.getElementById('si-pass').value;
-  if (!phone || phone.length < 7) { errEl.textContent = 'Ingresa tu número de teléfono'; return; }
-  if (!pass || pass.length < 3)   { errEl.textContent = 'Ingresa tu contraseña'; return; }
+function doLogin() {
+  const nameEl  = document.getElementById('login-name');
+  const phoneEl = document.getElementById('login-phone');
+  const passEl  = document.getElementById('login-pass');
+  const pass2El = document.getElementById('login-pass2');
+  const errEl   = document.getElementById('login-error');
+  const phone   = phoneEl.value.trim().replace(/\D/g,'');
+  errEl.textContent = '';
+
+  if (!phone || phone.length < 7) { errEl.textContent = 'Número de teléfono no válido.'; phoneEl.focus(); return; }
+
+  const pass = passEl.value;
+  if (!pass || pass.length < 4) { errEl.textContent = 'La contraseña debe tener al menos 4 caracteres.'; passEl.focus(); return; }
+
+  // ── Admin: camino propio, sin validar nombre ──
   if (phone === ADMIN_PHONE) {
-    if (pass !== ADMIN_PASS) { errEl.textContent = 'Contraseña incorrecta'; return; }
-    var users = loadUsers();
-    var adm = users.find(function(u){ return u.phone === phone; });
-    if (!adm) { adm = { id:Date.now(), name:ADMIN_NAME, phone:phone, passHash:btoa(pass), datetime:new Date().toISOString(), logins:0 }; users.unshift(adm); }
-    else { adm.lastLogin = new Date().toISOString(); adm.logins = (adm.logins||0)+1; }
+    if (pass !== ADMIN_PASS) { errEl.textContent = 'Contraseña incorrecta.'; passEl.value=''; passEl.focus(); return; }
+    const users = loadUsers();
+    let adm = users.find(u => u.phone === phone);
+    if (!adm) {
+      adm = { id:Date.now(), name:ADMIN_NAME, phone, passHash:btoa(pass), datetime:new Date().toISOString(), lastLogin:new Date().toISOString(), logins:1 };
+      users.unshift(adm);
+    } else {
+      adm.lastLogin = new Date().toISOString();
+      adm.logins = (adm.logins||0)+1;
+    }
     saveUsers(users);
     finishLogin(adm);
     return;
   }
-  var users = loadUsers();
-  var u = users.find(function(x){ return x.phone === phone; });
-  if (!u) { errEl.textContent = 'No estás registrado. Usa Registrarse'; return; }
-  if (u.passHash && u.passHash !== btoa(pass)) { errEl.textContent = 'Contraseña incorrecta'; document.getElementById('si-pass').value=''; return; }
-  u.lastLogin = new Date().toISOString();
-  u.logins = (u.logins||0)+1;
-  saveUsers(users);
-  finishLogin(u);
-}
-
-
-function doRegister() {
-  const name  = document.getElementById('reg-name').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim().replace(/\D/g,'');
-  const pass  = document.getElementById('reg-pass').value;
-  const pass2 = document.getElementById('reg-pass2').value;
-  const errEl = document.getElementById('reg-error');
-  errEl.textContent = '';
-
-  if (!name || name.length < 2)   { errEl.textContent = 'Ingresa tu nombre completo.'; return; }
-  if (!phone || phone.length < 7) { errEl.textContent = 'Número de teléfono no válido.'; return; }
-  if (!pass || pass.length < 4)   { errEl.textContent = 'La contraseña debe tener al menos 4 caracteres.'; return; }
-  if (pass !== pass2)             { errEl.textContent = 'Las contraseñas no coinciden.'; return; }
 
   const users = loadUsers();
-  if (users.find(u => u.phone === phone)) {
-    errEl.textContent = 'Este número ya está registrado. Inicia sesión.';
-    switchLoginTab('signin');
-    document.getElementById('si-phone').value = document.getElementById('reg-phone').value;
-    return;
+  const existing = users.find(u => u.phone === phone);
+
+  if (existing) {
+    // Usuario existente — verificar contraseña
+    if (existing.passHash) {
+      if (existing.passHash !== btoa(pass)) {
+        errEl.textContent = 'Contraseña incorrecta.'; passEl.value=''; passEl.focus(); return;
+      }
+    } else {
+      existing.passHash = btoa(pass); // cuenta vieja sin contraseña
+    }
+    existing.lastLogin = new Date().toISOString();
+    existing.logins = (existing.logins||0)+1;
+    saveUsers(users);
+    finishLogin(existing);
+  } else {
+    // Usuario nuevo — necesita nombre
+    const name = nameEl.value.trim();
+    if (!name || name.length < 2) {
+      // Mostrar campo de nombre si estaba oculto y pedir que lo llene
+      document.getElementById('fg-name').style.display = '';
+      document.getElementById('fg-pass2').style.display = '';
+      errEl.textContent = 'Ingresa tu nombre completo.'; nameEl.focus(); return;
+    }
+    const pass2 = pass2El.value;
+    // Si fg-pass2 está oculto (oninput no corrió), permitir sin confirmación
+    const pass2Hidden = document.getElementById('fg-pass2').style.display === 'none';
+    if (!pass2Hidden && pass !== pass2) { errEl.textContent = 'Las contraseñas no coinciden.'; pass2El.focus(); return; }
+    const user = { id:Date.now(), name, phone, passHash:btoa(pass), datetime:new Date().toISOString(), lastLogin:new Date().toISOString(), logins:1 };
+    users.unshift(user);
+    saveUsers(users);
+    finishLogin(user);
   }
-  const user = { id:Date.now(), name, phone, passHash:btoa(pass), datetime:new Date().toISOString(), lastLogin:new Date().toISOString(), logins:1 };
-  users.unshift(user);
-  saveUsers(users);
-  finishLogin(user);
 }
 
-// Mantener compatibilidad con llamadas antiguas
-// legacy stubs (eliminadas, reemplazadas por doSignin/doRegister)
-function checkPhoneExists() {}
-function doLogin() {}
-
 function resetMyAccount() {
-  const phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
-  if (!phone || phone.length < 7) { alert('Primero ingresa tu número de teléfono en "Iniciar sesión".'); return; }
+  const phoneEl = document.getElementById('login-phone');
+  const phone = phoneEl.value.trim().replace(/\D/g,'');
+  if (!phone || phone.length < 7) { alert('Primero ingresa tu número de teléfono.'); phoneEl.focus(); return; }
   if (!confirm('¿Restablecer tu cuenta? Tendrás que crear una nueva contraseña.')) return;
   const users = loadUsers();
   const idx = users.findIndex(u => u.phone === phone);
   if (idx !== -1) { users.splice(idx, 1); saveUsers(users); }
-  document.getElementById('si-error').textContent = 'Cuenta restablecida. Ahora regístrate de nuevo.';
-  switchLoginTab('register');
-  document.getElementById('reg-phone').value = document.getElementById('si-phone').value;
+  document.getElementById('login-error').textContent = 'Cuenta restablecida. Crea tu nueva contraseña.';
+  checkPhoneExists();
 }
 
 function finishLogin(user) {
@@ -1102,25 +1017,36 @@ function finishLogin(user) {
   const initials = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('user-avatar').textContent = initials;
   document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
-  const isAdmin = isUserAdmin(user.phone);
+  const isAdmin = (user.phone === ADMIN_PHONE);
   const adminBtn = document.getElementById('admin-btn');
   if (isAdmin) { adminBtn.style.display='inline-flex'; _adminUnlocked=true; }
   else { adminBtn.style.display='none'; _adminUnlocked=false; }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('login-phone').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
+  document.getElementById('login-pass') && document.getElementById('login-pass').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
+
   // Autocompletar teléfono si ya visitó antes
   const lastPhone = localStorage.getItem('jersey_last_phone');
   if (lastPhone) {
-    document.getElementById('si-phone').value = lastPhone;
+    document.getElementById('login-phone').value = lastPhone;
+    checkPhoneExists();
   }
 });
 
 function logout() {
+  // Guardar último usuario para autocompletar la próxima vez
+  if (state.currentUser) {
+    localStorage.setItem('jersey_last_user', JSON.stringify({
+      name: state.currentUser.name,
+      phone: state.currentUser.phone
+    }));
+  }
   state.currentUser = null;
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('app').classList.remove('visible');
-  document.getElementById('si-error').textContent = '';
+  document.getElementById('login-error').textContent = '';
   document.getElementById('admin-btn').style.display = 'none';
   _adminUnlocked = false;
   if (state.adminOpen) closeAdmin();
@@ -1130,26 +1056,12 @@ function logout() {
 // INIT APP
 // ═══════════════════════════════════════════════════════
 function initApp() {
-  console.log('[initApp] INICIO - CATALOG_SEED length:', typeof CATALOG_SEED !== 'undefined' ? CATALOG_SEED.length : 'UNDEFINED');
   state.products = loadProducts();
-  console.log('[initApp] products loaded:', state.products.length);
   state.categories = loadCategories(state.products);
   renderSidebar();
   applyFilters();
   updateCartBadge();
   document.getElementById('search-input').addEventListener('input', e => onSearch(e.target.value));
-  var savedName = localStorage.getItem('jersey_site_name');
-  if (savedName) applySiteName(savedName);
-  // Auto-login si viene de test
-  var alp = localStorage.getItem('jersey_autologin_phone');
-  var alx = localStorage.getItem('jersey_autologin_pass');
-  if (alp && alx) {
-    localStorage.removeItem('jersey_autologin_phone');
-    localStorage.removeItem('jersey_autologin_pass');
-    document.getElementById('si-phone').value = alp;
-    document.getElementById('si-pass').value = alx;
-    setTimeout(function(){ _doSignin(); }, 300);
-  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1234,7 +1146,6 @@ function applyFilters() {
 // PRODUCTS GRID
 // ═══════════════════════════════════════════════════════
 function renderProducts() {
-  console.log('[renderProducts] filtered:', state.filtered ? state.filtered.length : 'undefined', 'grid exists:', !!document.getElementById('products-grid'));
   const grid = document.getElementById('products-grid');
   const start = (state.currentPage - 1) * state.itemsPerPage;
   const page = state.filtered.slice(start, start + state.itemsPerPage);
@@ -1378,83 +1289,6 @@ function openAdmin() {
   renderAdminProducts('');
   populateCategorySelects();
   renderCategoriesAdmin();
-}
-
-
-// ═══════════════════════════════════════════════════════
-// CONFIG: Nombre del sitio y roles de admin
-// ═══════════════════════════════════════════════════════
-function getSiteAdmins() {
-  try { return JSON.parse(localStorage.getItem('jersey_admins') || '[]'); } catch(e) { return []; }
-}
-function saveSiteAdmins(arr) {
-  localStorage.setItem('jersey_admins', JSON.stringify(arr));
-}
-function isUserAdmin(phone) {
-  if (phone === ADMIN_PHONE) return true;
-  return getSiteAdmins().includes(phone);
-}
-function saveSiteName() {
-  var val = document.getElementById('cfg-site-name').value.trim();
-  if (!val) { document.getElementById('cfg-name-msg').textContent = 'Escribe un nombre'; document.getElementById('cfg-name-msg').style.color='#f87171'; return; }
-  localStorage.setItem('jersey_site_name', val);
-  applySiteName(val);
-  document.getElementById('cfg-name-msg').textContent = '✓ Guardado';
-  document.getElementById('cfg-name-msg').style.color='#4ade80';
-}
-function applySiteName(name) {
-  if (!name) return;
-  document.title = name;
-  var h = document.getElementById('header-brand-name');
-  if (h) h.textContent = name;
-  var l = document.getElementById('login-brand-text');
-  if (l) l.textContent = name;
-}
-function toggleAdminRole() {
-  var phone = document.getElementById('cfg-admin-phone').value.trim().replace(/\D/g,'');
-  var msg = document.getElementById('cfg-admin-msg');
-  if (!phone || phone.length < 7) { msg.textContent = 'Teléfono inválido'; msg.style.color='#f87171'; return; }
-  if (phone === ADMIN_PHONE) { msg.textContent = 'Este es el admin principal, no se puede modificar'; msg.style.color='#f87171'; return; }
-  var users = loadUsers();
-  var user = users.find(function(u){ return u.phone === phone; });
-  if (!user) { msg.textContent = 'Usuario no encontrado. Debe estar registrado primero.'; msg.style.color='#f87171'; return; }
-  var admins = getSiteAdmins();
-  var idx = admins.indexOf(phone);
-  if (idx === -1) {
-    admins.push(phone);
-    saveSiteAdmins(admins);
-    msg.textContent = '✓ ' + user.name + ' ahora es administrador';
-    msg.style.color='#4ade80';
-  } else {
-    admins.splice(idx, 1);
-    saveSiteAdmins(admins);
-    msg.textContent = '✓ ' + user.name + ' ya no es administrador';
-    msg.style.color='#f87171';
-  }
-  renderAdminsList();
-  document.getElementById('cfg-admin-phone').value = '';
-}
-function renderAdminsList() {
-  var admins = getSiteAdmins();
-  var users = loadUsers();
-  var el = document.getElementById('cfg-admins-list');
-  if (!el) return;
-  if (admins.length === 0) { el.innerHTML = '<p style="color:var(--muted);font-size:13px">Sin administradores adicionales.</p>'; return; }
-  el.innerHTML = '<div style="font-size:13px;font-weight:600;margin-bottom:8px">Administradores activos:</div>' +
-    admins.map(function(phone) {
-      var u = users.find(function(x){ return x.phone === phone; });
-      var name = u ? u.name : 'Desconocido';
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px">' +
-        '<div><strong>' + name + '</strong><span style="color:var(--muted);margin-left:8px;font-size:12px">' + phone + '</span></div>' +
-        '<button class="btn-sm btn-danger" onclick="removeAdmin(\'' + phone + '\')">Quitar</button></div>';
-    }).join('');
-}
-function removeAdmin(phone) {
-  var admins = getSiteAdmins();
-  saveSiteAdmins(admins.filter(function(p){ return p !== phone; }));
-  document.getElementById('cfg-admin-msg').textContent = 'Admin removido';
-  document.getElementById('cfg-admin-msg').style.color='#f87171';
-  renderAdminsList();
 }
 
 function closeAdmin() {
@@ -2029,49 +1863,7 @@ function deleteAllReviews() {
   showToast('Todas las reseñas eliminadas', 'success');
 }
 
-
-
-</script>
-
-<!-- catalog.js: 700+ productos — SE CARGA UNA SOLA VEZ al final -->
-<script src="catalog.js"></script>
-
-<script>
-console.log('[POST-CATALOG] bloque post-catalog corriendo');
-// Este bloque corre cuando catalog.js ya está listo (CATALOG_SEED disponible)
-(function(){
-  // 1. Siempre inicializar los productos
-  if (typeof initApp === 'function') {
-    try { initApp(); } catch(e) { console.error('[post-catalog] initApp error:', e); }
-  } else {
-    console.error('[post-catalog] initApp NO DEFINIDA');
-  }
-
-  // 2. Si el usuario ya hizo login manual (app visible) — listo
-  if (document.getElementById('app').classList.contains('visible')) {
-    return;
-  }
-
-  // 3. Restaurar sesion guardada
-  var s = localStorage.getItem('jersey_session');
-  if (s) {
-    try {
-      var u = JSON.parse(s);
-      var ok = (u.phone === ADMIN_PHONE);
-      if (!ok) {
-        var ex = cargarUsuarios().find(function(x){ return x.phone === u.phone; });
-        if (ex) { u = ex; ok = true; }
-      }
-      if (ok) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('app').classList.add('visible');
-        return;
-      }
-    } catch(e) {}
-    localStorage.removeItem('jersey_session');
-  }
-  // Sin sesion: login visible por defecto
-})();
+initApp();
 </script>
 </body>
 </html>
