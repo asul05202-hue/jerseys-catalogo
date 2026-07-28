@@ -805,6 +805,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="toast" id="toast"></div>
 
 <script>
+// BINDING LOGIN — primero para que no dependa del resto del JS
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    var btnSi = document.getElementById('btn-signin');
+    if (btnSi) btnSi.addEventListener('click', function(){ try{ doSignin(); }catch(e){ document.getElementById('si-error').textContent='Error: '+e.message; } });
+    var btnReg = document.getElementById('btn-register');
+    if (btnReg) btnReg.addEventListener('click', function(){ try{ doRegister(); }catch(e){ document.getElementById('reg-error').textContent='Error: '+e.message; } });
+    var tabSi = document.getElementById('tab-btn-signin');
+    if (tabSi) tabSi.addEventListener('click', function(){ switchLoginTab('signin'); });
+    var tabReg = document.getElementById('tab-btn-register');
+    if (tabReg) tabReg.addEventListener('click', function(){ switchLoginTab('register'); });
+    var siPhone = document.getElementById('si-phone');
+    if (siPhone) siPhone.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
+    var siPass = document.getElementById('si-pass');
+    if (siPass) siPass.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
+  } catch(e) { console.error('Login binding error:', e); }
+});
+window.addEventListener('load', function(){ try{ initApp(); }catch(e){ console.error(e); } });
 // ═══════════════════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════════════════
@@ -1865,21 +1883,7 @@ window.addEventListener('load', function() {
   var p2 = document.getElementById('si-pass');
   if (p2) p2.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
 });
-window.addEventListener('load', function() {
-  var b1 = document.getElementById('btn-signin');
-  if (b1) b1.addEventListener('click', function(){ doSignin(); });
-  var b2 = document.getElementById('btn-register');
-  if (b2) b2.addEventListener('click', function(){ doRegister(); });
-  var t1 = document.getElementById('tab-btn-signin');
-  if (t1) t1.addEventListener('click', function(){ switchLoginTab('signin'); });
-  var t2 = document.getElementById('tab-btn-register');
-  if (t2) t2.addEventListener('click', function(){ switchLoginTab('register'); });
-  var p1 = document.getElementById('si-phone');
-  if (p1) p1.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
-  var p2 = document.getElementById('si-pass');
-  if (p2) p2.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
-});
-window.addEventListener("load", function(){ initApp(); });
+
 </script>
 </body>
 </html>
