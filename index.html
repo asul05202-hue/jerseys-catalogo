@@ -465,7 +465,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
     <!-- SIGNIN -->
     <div id="panel-signin">
-      <form onsubmit="doSignin();return false;" autocomplete="on">
+      <form onsubmit="event.preventDefault();doSignin();" method="post" action="javascript:void(0)" autocomplete="on">
         <div class="login-form-wrap">
           <div class="form-group">
             <label>Teléfono</label>
@@ -487,7 +487,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
     <!-- REGISTER -->
     <div id="panel-register" style="display:none">
-      <form onsubmit="doRegister();return false;" autocomplete="on">
+      <form onsubmit="event.preventDefault();doRegister();" method="post" action="javascript:void(0)" autocomplete="on">
         <div class="login-form-wrap">
           <div class="form-group">
             <label>Nombre completo</label>
