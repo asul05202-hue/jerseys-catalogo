@@ -1130,7 +1130,9 @@ function logout() {
 // INIT APP
 // ═══════════════════════════════════════════════════════
 function initApp() {
+  console.log('[initApp] INICIO - CATALOG_SEED length:', typeof CATALOG_SEED !== 'undefined' ? CATALOG_SEED.length : 'UNDEFINED');
   state.products = loadProducts();
+  console.log('[initApp] products loaded:', state.products.length);
   state.categories = loadCategories(state.products);
   renderSidebar();
   applyFilters();
@@ -1232,6 +1234,7 @@ function applyFilters() {
 // PRODUCTS GRID
 // ═══════════════════════════════════════════════════════
 function renderProducts() {
+  console.log('[renderProducts] filtered:', state.filtered ? state.filtered.length : 'undefined', 'grid exists:', !!document.getElementById('products-grid'));
   const grid = document.getElementById('products-grid');
   const start = (state.currentPage - 1) * state.itemsPerPage;
   const page = state.filtered.slice(start, start + state.itemsPerPage);
