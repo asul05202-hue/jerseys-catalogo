@@ -459,55 +459,55 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="login-logo">⚽</div>
     <div class="login-brand" id="login-brand-text">Jersey Store</div>
     <div class="login-sub">Catálogo exclusivo de jerseys</div>
-
-    <!-- Tabs -->
     <div class="login-tabs">
-      <button class="login-tab active" id="tab-signin" id="tab-btn-signin" onclick="switchLoginTab('signin')">Iniciar sesión</button>
-      <button class="login-tab" id="tab-register" id="tab-btn-register" onclick="switchLoginTab('register')">Registrarse</button>
+      <button class="login-tab active" onclick="switchLoginTab('signin')">Iniciar sesión</button>
+      <button class="login-tab" onclick="switchLoginTab('register')">Registrarse</button>
     </div>
-
-    <!-- INICIAR SESIÓN -->
+    <!-- SIGNIN -->
     <div id="panel-signin">
       <div class="login-form-wrap">
         <div class="form-group">
-          <label for="si-phone">Teléfono</label>
-          <input type="text" id="si-phone" inputmode="numeric" pattern="[0-9]*" placeholder="10 dígitos" autocomplete="tel"/>
+          <label>Teléfono</label>
+          <input type="tel" id="si-phone" placeholder="10 dígitos" autocomplete="tel"/>
         </div>
         <div class="form-group">
-          <label for="si-pass">Contraseña</label>
-          <input type="password" id="si-pass" placeholder="Tu contraseña" autocomplete="current-password"/>
+          <label>Contraseña</label>
+          <input type="password" id="si-pass" placeholder="Tu contraseña"/>
         </div>
         <div class="login-error" id="si-error"></div>
-        <button type="button" class="login-btn" id="btn-signin" onclick="doSignin()">Iniciar sesión →</button>
+        <div style="margin-top:16px">
+          <button type="button" class="login-btn" id="btn-signin">Iniciar sesión →</button>
+        </div>
       </div>
       <div style="margin-top:14px;text-align:center">
-        <a href="#" onclick="resetMyAccount();return false" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
+        <a href="#" id="link-reset" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
       </div>
     </div>
-
-    <!-- REGISTRARSE -->
+    <!-- REGISTER -->
     <div id="panel-register" style="display:none">
       <div class="login-form-wrap">
         <div class="form-group">
-          <label for="reg-name">Nombre completo</label>
-          <input type="text" id="reg-name" placeholder="Tu nombre completo" autocomplete="name"/>
+          <label>Nombre completo</label>
+          <input type="text" id="reg-name" placeholder="Tu nombre" autocomplete="name"/>
         </div>
         <div class="form-group">
-          <label for="reg-phone">Teléfono</label>
+          <label>Teléfono</label>
           <input type="tel" id="reg-phone" placeholder="10 dígitos" autocomplete="tel"/>
         </div>
         <div class="form-group">
-          <label for="reg-pass">Contraseña</label>
-          <input type="password" id="reg-pass" placeholder="Mínimo 4 caracteres" autocomplete="new-password"/>
+          <label>Contraseña</label>
+          <input type="password" id="reg-pass" placeholder="Mínimo 4 caracteres"/>
         </div>
         <div class="form-group">
-          <label for="reg-pass2">Confirmar contraseña</label>
-          <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" autocomplete="new-password"/>
+          <label>Confirmar contraseña</label>
+          <input type="password" id="reg-pass2" placeholder="Repite tu contraseña"/>
         </div>
         <div class="login-error" id="reg-error"></div>
-        <button type="button" class="login-btn" onclick="doRegister()">Crear cuenta →</button>
+        <div style="margin-top:16px">
+          <button type="button" class="login-btn" id="btn-register">Crear cuenta →</button>
+        </div>
+      </div>
     </div>
-
   </div>
 </div>
 
@@ -831,19 +831,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 // Listeners de login via addEventListener (Enter en inputs)
 window.addEventListener('load', function(){
   try{ initApp(); }catch(e){ console.error('initApp error:',e); }
-  var siPhone = document.getElementById('si-phone');
-  if (siPhone) siPhone.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
-  var siPass = document.getElementById('si-pass');
-  if (siPass) siPass.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
+  // Bindings via addEventListener (no onclick en HTML)
+  document.getElementById('btn-signin').addEventListener('click', doSignin);
+  document.getElementById('btn-register').addEventListener('click', doRegister);
+  document.getElementById('link-reset').addEventListener('click', function(e){ e.preventDefault(); resetMyAccount(); });
+  document.getElementById('si-pass').addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
+  document.getElementById('si-phone').addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin(); });
+  document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if(e.key==='Enter') doRegister(); });
+  var savedName = localStorage.getItem('jersey_site_name');
+  if (savedName) applySiteName(savedName);
 });
-// ═══════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════
-// CATALOG_SEED cargado desde catalog.js
-const ADMIN_PASS = '125670Carlos';
-const ADMIN_NAME = 'Carlos Adrian Luevano Alatorre';
-const ADMIN_PHONE = '3343745531';
-const WA_NUMBER = '523343745531'; // WhatsApp del negocio (recibe pedidos)
 
 // ═══════════════════════════════════════════════════════
 // STATE
@@ -959,43 +956,31 @@ function switchLoginTab(tab) {
 }
 
 function doSignin() {
-  console.log("doSignin v4");
   var errEl = document.getElementById('si-error');
-  errEl.textContent = 'procesando...';
-  try {
-    var phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
-    var pass  = document.getElementById('si-pass').value;
-    errEl.textContent = 'phone:'+phone+' pass:'+pass.length+'chars seed:'+(window.CATALOG_SEED?window.CATALOG_SEED.length:'NO');
-    if (!phone || phone.length < 7) { errEl.textContent = 'Numero invalido'; return; }
-    if (!pass || pass.length < 4)   { errEl.textContent = 'Pass muy corta'; return; }
-    if (phone === ADMIN_PHONE) {
-      if (pass !== ADMIN_PASS) { errEl.textContent = 'Pass incorrecta'; return; }
-      var users = loadUsers();
-      var adm = users.find(function(u){ return u.phone === phone; });
-      if (!adm) {
-        adm = { id:Date.now(), name:ADMIN_NAME, phone:phone, passHash:btoa(pass), datetime:new Date().toISOString(), logins:0 };
-        users.unshift(adm);
-      } else {
-        adm.lastLogin = new Date().toISOString();
-        adm.logins = (adm.logins||0)+1;
-      }
-      saveUsers(users);
-      finishLogin(adm);
-      return;
-    }
+  var phone = document.getElementById('si-phone').value.trim().replace(/\D/g,'');
+  var pass  = document.getElementById('si-pass').value;
+  if (!phone || phone.length < 7) { errEl.textContent = 'Ingresa tu número de teléfono'; return; }
+  if (!pass || pass.length < 3)   { errEl.textContent = 'Ingresa tu contraseña'; return; }
+  if (phone === ADMIN_PHONE) {
+    if (pass !== ADMIN_PASS) { errEl.textContent = 'Contraseña incorrecta'; return; }
     var users = loadUsers();
-    var existing = users.find(function(u){ return u.phone === phone; });
-    if (!existing) { errEl.textContent = 'No registrado. Usa Registrarse'; return; }
-    if (existing.passHash && existing.passHash !== btoa(pass)) { errEl.textContent = 'Pass incorrecta'; document.getElementById('si-pass').value=''; return; }
-    existing.lastLogin = new Date().toISOString();
-    existing.logins = (existing.logins||0)+1;
+    var adm = users.find(function(u){ return u.phone === phone; });
+    if (!adm) { adm = { id:Date.now(), name:ADMIN_NAME, phone:phone, passHash:btoa(pass), datetime:new Date().toISOString(), logins:0 }; users.unshift(adm); }
+    else { adm.lastLogin = new Date().toISOString(); adm.logins = (adm.logins||0)+1; }
     saveUsers(users);
-    finishLogin(existing);
-  } catch(e) {
-    console.error('doSignin ERROR:', e);
-    errEl.textContent = 'ERROR: ' + e.message;
+    finishLogin(adm);
+    return;
   }
+  var users = loadUsers();
+  var u = users.find(function(x){ return x.phone === phone; });
+  if (!u) { errEl.textContent = 'No estás registrado. Usa Registrarse'; return; }
+  if (u.passHash && u.passHash !== btoa(pass)) { errEl.textContent = 'Contraseña incorrecta'; document.getElementById('si-pass').value=''; return; }
+  u.lastLogin = new Date().toISOString();
+  u.logins = (u.logins||0)+1;
+  saveUsers(users);
+  finishLogin(u);
 }
+
 
 function doRegister() {
   const name  = document.getElementById('reg-name').value.trim();
