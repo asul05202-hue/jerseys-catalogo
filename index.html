@@ -3,412 +3,569 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jerseys Premium 🎽</title>
+<title>Jerseys Premium</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f0f;color:#fff;min-height:100vh}
 
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #0f0f0f;
-    color: #fff;
-    min-height: 100vh;
-  }
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#0f0f0f,#1a1a2e)}
+.login-box{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:18px;padding:36px 28px;width:100%;max-width:370px;text-align:center}
+.login-box .ico{font-size:54px;margin-bottom:10px}
+.login-box h1{font-size:22px;font-weight:800;margin-bottom:4px}
+.login-box .sub{color:#777;font-size:13px;margin-bottom:26px}
+.tabs{display:flex;border:1px solid #333;border-radius:10px;overflow:hidden;margin-bottom:22px}
+.tab-btn{flex:1;padding:11px;background:#111;color:#888;border:none;cursor:pointer;font-size:14px;font-weight:700;transition:all .2s}
+.tab-btn.active{background:#e63946;color:#fff}
+.field{margin-bottom:14px;text-align:left}
+.field label{display:block;font-size:11px;color:#aaa;font-weight:700;letter-spacing:.6px;margin-bottom:5px}
+.field input{width:100%;padding:12px 14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#fff;font-size:15px;outline:none;transition:border .2s}
+.field input:focus{border-color:#e63946}
+.btn-main{width:100%;padding:14px;background:#e63946;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:800;cursor:pointer;margin-top:6px;transition:background .2s}
+.btn-main:hover{background:#c1121f}
+#login-err{color:#ff6b6b;font-size:13px;margin-top:12px;min-height:16px}
 
-  /* ── PANTALLA LOGIN ── */
-  #login-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 24px;
-    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-  }
-  .login-box {
-    background: #1e1e1e;
-    border: 1px solid #333;
-    border-radius: 16px;
-    padding: 36px 28px;
-    width: 100%;
-    max-width: 380px;
-    text-align: center;
-  }
-  .login-box .emoji { font-size: 52px; margin-bottom: 12px; }
-  .login-box h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-  .login-box p  { color: #999; font-size: 14px; margin-bottom: 28px; }
+/* APP */
+#app{display:none}
+.header{background:#161616;border-bottom:2px solid #e63946;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-left .ico2{font-size:24px}
+.hdr-left h2{font-size:16px;font-weight:800}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.uinfo{text-align:right;line-height:1.3}
+.uinfo .un{font-size:13px;font-weight:700}
+.uinfo .ur{font-size:11px;color:#e63946}
+.btn-sm{padding:7px 13px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:700;transition:all .2s}
+.btn-logout{background:#2a2a2a;color:#bbb}
+.btn-logout:hover{background:#333}
+.btn-admin-hdr{background:#e63946;color:#fff}
+.btn-admin-hdr:hover{background:#c1121f}
 
-  .tabs { display: flex; gap: 0; margin-bottom: 24px; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
-  .tab-btn {
-    flex: 1; padding: 10px; background: #111; color: #888;
-    border: none; cursor: pointer; font-size: 14px; font-weight: 600; transition: all .2s;
-  }
-  .tab-btn.active { background: #e63946; color: #fff; }
+/* CONTENT */
+.content{padding:20px 14px;max-width:920px;margin:0 auto}
+.sec-title{font-size:11px;font-weight:800;color:#e63946;letter-spacing:1.8px;text-transform:uppercase;padding:8px 0 10px;border-bottom:1px solid #222;margin:28px 0 14px}
+.sec-title:first-child{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.card{background:#1a1a1a;border:1px solid #252525;border-radius:12px;padding:16px;transition:border-color .2s,transform .15s}
+.card:hover{border-color:#e63946;transform:translateY(-2px)}
+.card-name{font-size:14px;font-weight:700;margin-bottom:3px;line-height:1.4}
+.card-cat{font-size:11px;color:#777;margin-bottom:10px}
+.card-note{font-size:11px;color:#f4a261;background:#1f1200;border-radius:6px;padding:4px 8px;margin-bottom:10px;display:inline-block}
+.card-btns{display:flex;gap:7px;margin-top:10px}
+.btn-ver{flex:1;padding:9px;background:#222;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;text-align:center;cursor:pointer;transition:background .2s}
+.btn-ver:hover{background:#333}
+.btn-wa{padding:9px 13px;background:#25d366;color:#fff;border:none;border-radius:8px;font-size:16px;text-decoration:none;cursor:pointer;transition:background .2s}
+.btn-wa:hover{background:#1ebe5c}
+.btn-review{padding:9px 13px;background:#2a2a5a;color:#aad;border:none;border-radius:8px;font-size:14px;text-decoration:none;cursor:pointer;transition:background .2s}
+.btn-review:hover{background:#3a3a7a}
 
-  .field-group { margin-bottom: 16px; text-align: left; }
-  .field-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 6px; font-weight: 600; letter-spacing: .5px; }
-  .field-group input {
-    width: 100%; padding: 12px 14px; background: #111; border: 1px solid #333;
-    border-radius: 8px; color: #fff; font-size: 15px; outline: none; transition: border .2s;
-  }
-  .field-group input:focus { border-color: #e63946; }
+/* RESEÑAS PÚBLICAS */
+.reviews-section{margin-top:40px;padding-top:20px;border-top:1px solid #222}
+.review-card{background:#1a1a1a;border:1px solid #252525;border-radius:10px;padding:14px;margin-bottom:10px}
+.review-card .rv-name{font-size:13px;font-weight:700;color:#e63946}
+.review-card .rv-text{font-size:13px;color:#ccc;margin-top:4px;line-height:1.5}
+.review-card .rv-date{font-size:11px;color:#555;margin-top:6px}
+.stars{color:#f4a261;font-size:14px;margin-top:2px}
 
-  .btn-primary {
-    width: 100%; padding: 14px; background: #e63946; color: #fff;
-    border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
-    cursor: pointer; transition: background .2s; margin-top: 4px;
-  }
-  .btn-primary:hover { background: #c1121f; }
-  #login-error { color: #ff6b6b; font-size: 13px; margin-top: 12px; min-height: 18px; }
+/* MODAL RESEÑA */
+#review-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;align-items:center;justify-content:center;padding:20px}
+#review-modal.show{display:flex}
+.modal-box{background:#1a1a1a;border:1px solid #333;border-radius:16px;padding:28px;width:100%;max-width:420px}
+.modal-box h3{font-size:16px;font-weight:800;margin-bottom:16px}
+.modal-close{float:right;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;margin-top:-4px}
+.star-pick{display:flex;gap:8px;font-size:28px;margin-bottom:16px;cursor:pointer}
+.star-pick span{opacity:.3;transition:opacity .15s}
+.star-pick span.on{opacity:1}
+#review-text{width:100%;height:90px;padding:10px;background:#111;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;resize:none;outline:none}
+#review-text:focus{border-color:#e63946}
+.btn-review-send{width:100%;margin-top:12px;padding:13px;background:#e63946;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer}
 
-  /* ── APP PRINCIPAL ── */
-  #app { display: none; }
+/* PANEL ADMIN */
+#admin-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+#admin-modal.show{display:flex}
+.admin-box{background:#1a1a1a;border:1px solid #333;border-radius:16px;padding:24px;width:100%;max-width:680px;margin:auto}
+.admin-box h2{font-size:18px;font-weight:800;margin-bottom:20px}
+.admin-close2{float:right;background:none;border:none;color:#fff;font-size:24px;cursor:pointer}
+.admin-tabs{display:flex;gap:0;border:1px solid #333;border-radius:10px;overflow:hidden;margin-bottom:20px}
+.atab{flex:1;padding:10px;background:#111;color:#777;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s}
+.atab.active{background:#e63946;color:#fff}
+.admin-section{display:none}
+.admin-section.active{display:block}
+.a-row{display:flex;align-items:center;justify-content:space-between;background:#111;border-radius:8px;padding:12px 14px;margin-bottom:8px;gap:10px;flex-wrap:wrap}
+.a-row-info .an{font-size:14px;font-weight:700}
+.a-row-info .as{font-size:12px;color:#888;margin-top:2px}
+.a-row-info .ap{font-size:11px;color:#e63946;margin-top:2px}
+.btn-del{background:#7b0000;border:none;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer}
+.btn-del:hover{background:#c1121f}
+.empty-msg{color:#555;font-size:13px;text-align:center;padding:24px}
+.order-item{background:#111;border-radius:8px;padding:12px;margin-bottom:8px}
+.order-item .oi-prod{font-size:14px;font-weight:700}
+.order-item .oi-user{font-size:12px;color:#aaa;margin-top:3px}
+.order-item .oi-msg{font-size:12px;color:#888;margin-top:4px;font-style:italic}
+.order-item .oi-date{font-size:11px;color:#555;margin-top:4px}
+.rv-admin{background:#111;border-radius:8px;padding:12px;margin-bottom:8px}
+.rv-admin .ra-user{font-size:13px;font-weight:700;color:#e63946}
+.rv-admin .ra-prod{font-size:12px;color:#888}
+.rv-admin .ra-text{font-size:13px;color:#ccc;margin-top:5px}
+.rv-admin .ra-date{font-size:11px;color:#555;margin-top:4px}
 
-  /* Header */
-  .header {
-    background: #1a1a1a;
-    border-bottom: 1px solid #2a2a2a;
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .header-left { display: flex; align-items: center; gap: 10px; }
-  .header-left .logo { font-size: 22px; }
-  .header-left h2 { font-size: 17px; font-weight: 700; }
-  .header-right { display: flex; align-items: center; gap: 10px; }
-  .user-info { text-align: right; }
-  .user-info .uname { font-size: 13px; font-weight: 600; }
-  .user-info .urole { font-size: 11px; color: #e63946; }
-  .btn-logout {
-    background: #2a2a2a; border: 1px solid #444; color: #ccc;
-    padding: 7px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
-  }
-  .btn-admin {
-    background: #e63946; border: none; color: #fff;
-    padding: 7px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 600;
-  }
-
-  /* Contenido */
-  .content { padding: 24px 16px; max-width: 900px; margin: 0 auto; }
-
-  .section-title {
-    font-size: 13px; font-weight: 700; color: #e63946;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    margin-bottom: 14px; margin-top: 28px;
-    padding-bottom: 6px; border-bottom: 1px solid #2a2a2a;
-  }
-  .section-title:first-child { margin-top: 0; }
-
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-  }
-
-  .card {
-    background: #1e1e1e;
-    border: 1px solid #2a2a2a;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform .2s, border-color .2s;
-  }
-  .card:hover { transform: translateY(-2px); border-color: #e63946; }
-
-  .card-body { padding: 16px; }
-  .card-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
-  .card-sub  { font-size: 12px; color: #888; margin-bottom: 14px; }
-  .card-note { font-size: 11px; color: #e8a045; background: #2a2000; padding: 5px 8px; border-radius: 6px; margin-bottom: 12px; }
-
-  .card-actions { display: flex; gap: 8px; }
-  .btn-ver {
-    flex: 1; padding: 10px; background: #2a2a2a; color: #fff;
-    border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
-    cursor: pointer; text-decoration: none; text-align: center;
-    transition: background .2s; display: block;
-  }
-  .btn-ver:hover { background: #3a3a3a; }
-  .btn-wa {
-    padding: 10px 14px; background: #25d366; color: #fff;
-    border: none; border-radius: 8px; font-size: 18px;
-    cursor: pointer; text-decoration: none; display: block;
-    transition: background .2s;
-  }
-  .btn-wa:hover { background: #1da851; }
-
-  /* Panel Admin */
-  #admin-panel {
-    display: none;
-    position: fixed; inset: 0; background: rgba(0,0,0,.8);
-    z-index: 200; align-items: center; justify-content: center; padding: 20px;
-  }
-  #admin-panel.show { display: flex; }
-  .admin-box {
-    background: #1e1e1e; border: 1px solid #333; border-radius: 16px;
-    padding: 28px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto;
-  }
-  .admin-box h2 { font-size: 18px; margin-bottom: 20px; }
-  .admin-close { float: right; background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
-  .user-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px; background: #111; border-radius: 8px; margin-bottom: 8px;
-  }
-  .user-row-info .urow-name { font-size: 14px; font-weight: 600; }
-  .user-row-info .urow-tel  { font-size: 12px; color: #888; }
-  .btn-del {
-    background: #c1121f; border: none; color: #fff;
-    padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;
-  }
-  .admin-empty { color: #666; font-size: 14px; text-align: center; padding: 20px; }
-
-  @media(max-width:480px){
-    .cards-grid { grid-template-columns: 1fr; }
-    .content { padding: 16px 12px; }
-  }
+@media(max-width:500px){
+  .grid{grid-template-columns:1fr}
+  .content{padding:14px 10px}
+  .header{padding:10px 12px}
+}
 </style>
 </head>
 <body>
 
-<!-- ═══ LOGIN ═══ -->
+<!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="emoji">🎽</div>
-    <h1>Jerseys Premium</h1>
-    <p>Accede al catálogo exclusivo</p>
-
-    <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('login')">Entrar</button>
-      <button class="tab-btn"        onclick="showTab('register')">Registrarme</button>
-    </div>
-
-    <!-- Tab Login -->
-    <div id="tab-login">
-      <div class="field-group">
-        <label>TELÉFONO</label>
-        <input type="tel" id="l-phone" placeholder="10 dígitos" maxlength="10">
-      </div>
-      <div class="field-group">
-        <label>CONTRASEÑA</label>
-        <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-      <button class="btn-primary" onclick="doLogin()">Entrar al catálogo →</button>
-    </div>
-
-    <!-- Tab Registro -->
-    <div id="tab-register" style="display:none">
-      <div class="field-group">
-        <label>NOMBRE COMPLETO</label>
-        <input type="text" id="r-name" placeholder="Tu nombre">
-      </div>
-      <div class="field-group">
-        <label>TELÉFONO</label>
-        <input type="tel" id="r-phone" placeholder="10 dígitos" maxlength="10">
-      </div>
-      <div class="field-group">
-        <label>CONTRASEÑA</label>
-        <input type="password" id="r-pass" placeholder="Elige una contraseña">
-      </div>
-      <button class="btn-primary" onclick="doRegister()">Crear cuenta →</button>
-    </div>
-
-    <div id="login-error"></div>
+<div class="login-box">
+  <div class="ico">🎽</div>
+  <h1>Jerseys Premium</h1>
+  <div class="sub">Catalogo exclusivo</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('login')">Entrar</button>
+    <button class="tab-btn" onclick="showTab('reg')">Registrarme</button>
   </div>
+  <div id="tab-login">
+    <div class="field"><label>TELEFONO</label><input type="tel" id="lph" placeholder="10 digitos" maxlength="10"></div>
+    <div class="field"><label>CONTRASENA</label><input type="password" id="lps" placeholder="..." onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-main" onclick="doLogin()">Entrar al catalogo</button>
+  </div>
+  <div id="tab-reg" style="display:none">
+    <div class="field"><label>NOMBRE COMPLETO</label><input type="text" id="rn" placeholder="Tu nombre"></div>
+    <div class="field"><label>TELEFONO</label><input type="tel" id="rph" placeholder="10 digitos" maxlength="10"></div>
+    <div class="field"><label>CONTRASENA</label><input type="password" id="rps" placeholder="Minimo 4 caracteres"></div>
+    <button class="btn-main" onclick="doRegister()">Crear cuenta</button>
+  </div>
+  <div id="login-err"></div>
+</div>
 </div>
 
-<!-- ═══ APP ═══ -->
+<!-- APP -->
 <div id="app">
-
   <div class="header">
-    <div class="header-left">
-      <span class="logo">🎽</span>
-      <h2>Jerseys Premium</h2>
-    </div>
-    <div class="header-right">
-      <div class="user-info">
-        <div class="uname" id="hdr-name"></div>
-        <div class="urole" id="hdr-role"></div>
-      </div>
-      <button class="btn-admin" id="btn-admin" style="display:none" onclick="openAdmin()">⚙ Admin</button>
-      <button class="btn-logout" onclick="doLogout()">Salir</button>
+    <div class="hdr-left"><span class="ico2">🎽</span><h2>Jerseys Premium</h2></div>
+    <div class="hdr-right">
+      <div class="uinfo"><div class="un" id="hdr-name"></div><div class="ur" id="hdr-role"></div></div>
+      <button class="btn-sm btn-admin-hdr" id="btn-adm" style="display:none" onclick="openAdmin()">Admin</button>
+      <button class="btn-sm btn-logout" onclick="doLogout()">Salir</button>
     </div>
   </div>
-
-  <div class="content" id="catalog-content">
-    <!-- generado por JS -->
+  <div class="content" id="main-content"></div>
+  <div class="content">
+    <div class="sec-title">Resenas de clientes</div>
+    <div id="public-reviews"></div>
   </div>
-
 </div>
 
-<!-- ═══ PANEL ADMIN ═══ -->
-<div id="admin-panel">
+<!-- MODAL RESENA -->
+<div id="review-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeReview()">x</button>
+    <h3>Deja tu resena</h3>
+    <div class="star-pick" id="star-pick">
+      <span onclick="setStar(1)">&#9733;</span>
+      <span onclick="setStar(2)">&#9733;</span>
+      <span onclick="setStar(3)">&#9733;</span>
+      <span onclick="setStar(4)">&#9733;</span>
+      <span onclick="setStar(5)">&#9733;</span>
+    </div>
+    <div class="field"><label>PRODUCTO</label><input type="text" id="rv-prod" placeholder="Que compraste?"></div>
+    <textarea id="review-text" placeholder="Cuéntanos tu experiencia..."></textarea>
+    <button class="btn-review-send" onclick="submitReview()">Publicar resena</button>
+  </div>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="admin-modal">
   <div class="admin-box">
-    <button class="admin-close" onclick="closeAdmin()">✕</button>
-    <h2>👥 Usuarios registrados</h2>
-    <div id="admin-users-list"></div>
+    <button class="admin-close2" onclick="closeAdmin()">x</button>
+    <h2>Panel de administracion</h2>
+    <div class="admin-tabs">
+      <button class="atab active" onclick="switchAdminTab('users')">Usuarios</button>
+      <button class="atab" onclick="switchAdminTab('orders')">Pedidos</button>
+      <button class="atab" onclick="switchAdminTab('reviews')">Resenas</button>
+    </div>
+    <div id="at-users" class="admin-section active"></div>
+    <div id="at-orders" class="admin-section"></div>
+    <div id="at-reviews" class="admin-section"></div>
   </div>
 </div>
 
-<script src="catalog_links.js"></script>
 <script>
 var ADMIN_PHONE = '3343745531';
 var ADMIN_PASS  = '125670Carlos';
 var ADMIN_NAME  = 'Carlos Adrian Luevano Alatorre';
 var WA_NUMBER   = '523343745531';
+var currentStar = 0;
+var currentSess = null;
 
-// ── STORAGE ──
-function loadUsers() {
-  try { return JSON.parse(localStorage.getItem('jUsers') || '{}'); } catch(e){ return {}; }
-}
-function saveUsers(u) {
-  localStorage.setItem('jUsers', JSON.stringify(u));
-}
-function getSession() {
-  try { return JSON.parse(sessionStorage.getItem('jSess') || 'null'); } catch(e){ return null; }
-}
-function setSession(s) {
-  sessionStorage.setItem('jSess', JSON.stringify(s));
+var CATALOG = [
+  { cat: 'Liga MX', items: [
+    { name: 'Liga MX - Camisetas', url: 'https://a759499776.x.yupoo.com/categories/4364554' },
+    { name: 'Liga MX - Camisetas 2', url: 'https://tcc918-q.x.yupoo.com/categories/4879861' },
+    { name: 'Liga MX - Jugador (America, Chivas...)', url: 'https://baocheng3f888.x.yupoo.com/albums/246292583?uid=1&isSubCate=false&referrercate=3517272' },
+    { name: 'Liga MX - Jugador 2', url: 'https://baocheng3f888.x.yupoo.com/albums/246530105?uid=1&isSubCate=false&referrercate=3517272' },
+    { name: 'Liga MX - Jugador 3', url: 'https://baocheng3f888.x.yupoo.com/albums/245410908?uid=1&isSubCate=false&referrercate=3517272' },
+    { name: 'Liga MX - Conjunto mexicano', url: 'https://hrtz522.x.yupoo.com/albums' },
+    { name: 'Liga MX - Coleccion especial', url: 'https://huihui234.x.yupoo.com/', note: 'Pass: huihui888' },
+    { name: 'Liga MX - Retro Mexicana', url: 'https://2707499085.x.yupoo.com/' },
+    { name: 'Liga MX - Ropa femenina', url: 'https://a759499776.x.yupoo.com/categories/4453831' }
+  ]},
+  { cat: 'Selecciones Nacionales', items: [
+    { name: 'Selecciones y Clubes', url: 'https://zzs04.x.yupoo.com/' },
+    { name: 'Selecciones - Coleccion 1', url: 'https://zzs04.x.yupoo.com/collections/4659161' },
+    { name: 'Selecciones - Coleccion 2', url: 'https://zzs04.x.yupoo.com/collections/4792009' },
+    { name: 'Selecciones y Clubes 2', url: 'https://420jersy.x.yupoo.com/' },
+    { name: 'Seleccion nacional y liga', url: 'https://guangzhe009.x.yupoo.com/categories' },
+    { name: 'Ligas y Selecciones', url: 'https://18369567776.x.yupoo.com/' },
+    { name: 'Version jugador + fan', url: 'https://hongpintiyu.x.yupoo.com/' },
+    { name: 'Version fan 1', url: 'https://guanshen1013998228.x.yupoo.com/albums/?page=1' },
+    { name: 'Version fan 2', url: 'https://svip-1688.x.yupoo.com/' },
+    { name: 'Version fan 3', url: 'https://leshang167.x.yupoo.com/' },
+    { name: 'Version fan 4', url: 'https://xianghong88.x.yupoo.com/' },
+    { name: 'Version fan - hongpin', url: 'https://hongpintiyu.x.yupoo.com/categories/5045397' },
+    { name: 'Version jugador 1', url: 'https://baocheng3f888.x.yupoo.com/collections/3517272' },
+    { name: 'Version jugador 2', url: 'https://3409834285.x.yupoo.com/' },
+    { name: 'Version jugador 3', url: 'https://bufan188.x.yupoo.com/albums' },
+    { name: 'Jugador - Pantalones cortos', url: 'https://baocheng3f888.x.yupoo.com/collections/5146701' },
+    { name: 'Jugador anime japones', url: 'https://18369567776.x.yupoo.com/collections/4873451' },
+    { name: 'Jugador - liang', url: 'https://liang19802013380.x.yupoo.com/categories/5139558' },
+    { name: 'Estilo femenino', url: 'https://bomandi.x.yupoo.com/categories/4782417' }
+  ]},
+  { cat: 'Europa - Clubes', items: [
+    { name: 'Europa - Version jugador', url: 'https://baocheng3f888.x.yupoo.com/collections/3517272?page=1' },
+    { name: 'Europa - zzs04', url: 'https://zzs04.x.yupoo.com/collections/4659163' }
+  ]},
+  { cat: 'Retro Europa', items: [
+    { name: 'Retro Europa - Series', url: 'https://3072503479.x.yupoo.com/categories/4685054' },
+    { name: 'Retro Europa - Todo', url: 'https://3072503479.x.yupoo.com/' },
+    { name: 'Retro - ingsports', url: 'https://ingsports0828.x.yupoo.com/' },
+    { name: 'Retro - 3484linga', url: 'https://3484linga.x.yupoo.com/albums' },
+    { name: 'Retro - mx18776500995mx', url: 'https://mx18776500995mx.x.yupoo.com/albums/94816568?uid=1' }
+  ]},
+  { cat: 'Retro Liga MX', items: [
+    { name: 'Retro Liga MX - yuebo', url: 'https://yuebojersey.x.yupoo.com/collections/4169658' },
+    { name: 'Retro Mexicana - 2707', url: 'https://2707499085.x.yupoo.com/' }
+  ]},
+  { cat: 'Retros - Barcelona y Europeos', items: [
+    { name: 'Retros - Col 5137840', url: 'https://3484linga.x.yupoo.com/collections/5137840' },
+    { name: 'Retros - Col 5137842', url: 'https://3484linga.x.yupoo.com/collections/5137842' },
+    { name: 'Retros - Col 5137843', url: 'https://3484linga.x.yupoo.com/collections/5137843' },
+    { name: 'Retros - Col 5137856', url: 'https://3484linga.x.yupoo.com/collections/5137856' },
+    { name: 'Retros - Col 5137857', url: 'https://3484linga.x.yupoo.com/collections/5137857' },
+    { name: 'Retros - Col 5137858', url: 'https://3484linga.x.yupoo.com/collections/5137858' },
+    { name: 'Retros - Col 5137859', url: 'https://3484linga.x.yupoo.com/collections/5137859' },
+    { name: 'Retros - Col 5137860', url: 'https://3484linga.x.yupoo.com/collections/5137860' },
+    { name: 'Retros - Col 5138173', url: 'https://3484linga.x.yupoo.com/collections/5138173' },
+    { name: 'Retros - Col 5138175', url: 'https://3484linga.x.yupoo.com/collections/5138175' },
+    { name: 'Retros - Col 5138176', url: 'https://3484linga.x.yupoo.com/collections/5138176' },
+    { name: 'Retros - Col 5138181', url: 'https://3484linga.x.yupoo.com/collections/5138181' },
+    { name: 'Retros - Col 5138183', url: 'https://3484linga.x.yupoo.com/collections/5138183' },
+    { name: 'Retros - Col 5138184', url: 'https://3484linga.x.yupoo.com/collections/5138184' },
+    { name: 'Retros - Col 5138188', url: 'https://3484linga.x.yupoo.com/collections/5138188' },
+    { name: 'Retros - Col 5138189', url: 'https://3484linga.x.yupoo.com/collections/5138189' },
+    { name: 'Retros - Col 5138190', url: 'https://3484linga.x.yupoo.com/collections/5138190' },
+    { name: 'Retros - Col 5138191', url: 'https://3484linga.x.yupoo.com/collections/5138191' },
+    { name: 'Retros - Col 5138194', url: 'https://3484linga.x.yupoo.com/collections/5138194' },
+    { name: 'Retros - Col 5138195', url: 'https://3484linga.x.yupoo.com/collections/5138195' },
+    { name: 'Retros - Col 5138197', url: 'https://3484linga.x.yupoo.com/collections/5138197' },
+    { name: 'Retros - Col 5138198', url: 'https://3484linga.x.yupoo.com/collections/5138198' },
+    { name: 'Retros - Col 5138199', url: 'https://3484linga.x.yupoo.com/collections/5138199' },
+    { name: 'Retros - Col 5138200', url: 'https://3484linga.x.yupoo.com/collections/5138200' },
+    { name: 'Retros - Col 5138203', url: 'https://3484linga.x.yupoo.com/collections/5138203' },
+    { name: 'Retros - Col 5138204', url: 'https://3484linga.x.yupoo.com/collections/5138204' },
+    { name: 'Retros - Col 5138206', url: 'https://3484linga.x.yupoo.com/collections/5138206' },
+    { name: 'Retros - Col 5138207', url: 'https://3484linga.x.yupoo.com/collections/5138207' },
+    { name: 'Retros - Col 5138208', url: 'https://3484linga.x.yupoo.com/collections/5138208' },
+    { name: 'Retros - Col 5138210', url: 'https://3484linga.x.yupoo.com/collections/5138210' },
+    { name: 'Retros - Col 5138211', url: 'https://3484linga.x.yupoo.com/collections/5138211' },
+    { name: 'Retros - Col 5143104', url: 'https://3484linga.x.yupoo.com/collections/5143104' },
+    { name: 'Retros - Col 5146191', url: 'https://3484linga.x.yupoo.com/collections/5146191' },
+    { name: 'Retros - Col 5234447', url: 'https://3484linga.x.yupoo.com/collections/5234447' },
+    { name: 'Retros - Album 5138170', url: 'https://3484linga.x.yupoo.com/albums/240407652?uid=1&isSubCate=false&referrercate=5138170' },
+    { name: 'Retros - Album 5138186', url: 'https://3484linga.x.yupoo.com/albums/226181458?uid=1&isSubCate=false&referrercate=5138186' },
+    { name: 'Retros - Album 5138209', url: 'https://3484linga.x.yupoo.com/albums/245978523?uid=1&isSubCate=false&referrercate=5138209' }
+  ]},
+  { cat: 'NBA / NHL / NFL / MLB', items: [
+    { name: 'NBA, NHL, NFL, MLB - Completo', url: 'https://linrirong1314.x.yupoo.com/categories', note: 'Pass: 778899' },
+    { name: 'Uniformes de baloncesto 1', url: 'https://qiuqi-sports.x.yupoo.com/' },
+    { name: 'Uniformes de baloncesto 2', url: 'https://lan-xing.x.yupoo.com/' },
+    { name: 'Uniformes de baloncesto 3', url: 'https://xingkong-sports.x.yupoo.com/' },
+    { name: 'Ropa NBA', url: 'https://94nbaqiuyi.x.yupoo.com/' },
+    { name: 'Pantalones y ropa', url: 'https://cz9007.x.yupoo.com/' },
+    { name: 'NFL - Futbol americano', url: 'https://nfl-cyq888.x.zhidian-inc.cn/' },
+    { name: 'Shorts NBA', url: 'https://xingda88.x.yupoo.com/', note: 'Pass: 667788' },
+    { name: 'NBA Termosellado', url: 'https://pifajersey.x.yupoo.com/albums' }
+  ]},
+  { cat: 'Uniformes de Entrenamiento', items: [
+    { name: 'Conjunto entrenamiento - changjiangsports', url: 'https://x.yupoo.com/photos/changjiangsports/albums?tab=gallery' },
+    { name: 'Traje entrenamiento - huang456852', url: 'https://huang456852.x.yupoo.com/albums' },
+    { name: 'Traje entrenamiento - aosendi', url: 'https://aosendi.x.yupoo.com/albums' },
+    { name: 'Conjuntos entrenamiento - dongshanstore', url: 'https://dongshanstore.x.yupoo.com/albums' },
+    { name: 'Uniforme entrenamiento - 007007', url: 'https://007007haoyuntiyu.x.yupoo.com/' },
+    { name: 'Traje entrenamiento - kuanghanyundong', url: 'https://kuanghanyundong.x.yupoo.com/albums' }
+  ]},
+  { cat: 'Playeras de Beisbol', items: [
+    { name: 'Beisbol - zzs04', url: 'https://zzs04.x.yupoo.com/collections/4970751' }
+  ]},
+  { cat: 'Sachets / Jackets', items: [
+    { name: 'Jackets - zzs04', url: 'https://zzs04.x.yupoo.com/collections/4911006' },
+    { name: 'Chaqueta cortavientos 1', url: 'https://1215795243.x.yupoo.com/categories' },
+    { name: 'Chaqueta cortavientos 2', url: 'https://ty-guoji.x.yupoo.com/albums' }
+  ]},
+  { cat: 'Shorts', items: [
+    { name: 'Shorts - zzs04', url: 'https://zzs04.x.yupoo.com/collections/4834911' }
+  ]},
+  { cat: 'Ropa Informal / Casual', items: [
+    { name: 'Ropa casual - lisa1059', url: 'https://lisa1059.x.yupoo.com' },
+    { name: 'Ropa casual - ting8899', url: 'https://ting8899.x.yupoo.com/' },
+    { name: 'Ropa casual - ty-guoji', url: 'https://ty-guoji.x.yupoo.com/categories' },
+    { name: 'F1', url: 'https://yiyisports2016.x.yupoo.com/' }
+  ]}
+];
+
+// STORAGE
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem('jpUsers')||'{}'); }catch(e){ return {}; } }
+function saveUsers(u){ localStorage.setItem('jpUsers',JSON.stringify(u)); }
+function loadOrders(){ try{ return JSON.parse(localStorage.getItem('jpOrders')||'[]'); }catch(e){ return []; } }
+function saveOrders(o){ localStorage.setItem('jpOrders',JSON.stringify(o)); }
+function loadReviews(){ try{ return JSON.parse(localStorage.getItem('jpReviews')||'[]'); }catch(e){ return []; } }
+function saveReviews(r){ localStorage.setItem('jpReviews',JSON.stringify(r)); }
+function getSession(){ try{ return JSON.parse(sessionStorage.getItem('jpSess')||'null'); }catch(e){ return null; } }
+function setSession(s){ sessionStorage.setItem('jpSess',JSON.stringify(s)); }
+
+// TABS LOGIN
+function showTab(t){
+  document.getElementById('tab-login').style.display = t==='login' ? '' : 'none';
+  document.getElementById('tab-reg').style.display   = t==='reg'   ? '' : 'none';
+  var btns = document.querySelectorAll('.tab-btn');
+  btns[0].classList.toggle('active', t==='login');
+  btns[1].classList.toggle('active', t==='reg');
+  document.getElementById('login-err').textContent='';
 }
 
-// ── TABS ──
-function showTab(t) {
-  document.getElementById('tab-login').style.display    = t==='login'    ? '' : 'none';
-  document.getElementById('tab-register').style.display = t==='register' ? '' : 'none';
-  document.querySelectorAll('.tab-btn').forEach(function(b,i){
-    b.classList.toggle('active', (t==='login' && i===0) || (t==='register' && i===1));
-  });
-  document.getElementById('login-error').textContent = '';
-}
-
-// ── LOGIN ──
-function doLogin() {
-  var phone = (document.getElementById('l-phone').value || '').trim();
-  var pass  = (document.getElementById('l-pass').value  || '').trim();
-  var err   = document.getElementById('login-error');
-  err.textContent = '';
-
-  if (phone.length < 7) { err.textContent = 'Ingresa tu telefono.'; return; }
-  if (!pass)            { err.textContent = 'Ingresa tu contrasena.'; return; }
-
-  // Admin
-  if (phone === ADMIN_PHONE) {
-    if (pass !== ADMIN_PASS) { err.textContent = 'Contrasena incorrecta.'; return; }
-    setSession({ phone: ADMIN_PHONE, name: ADMIN_NAME, role: 'admin' });
-    enterApp({ phone: ADMIN_PHONE, name: ADMIN_NAME, role: 'admin' });
-    return;
+// LOGIN
+function doLogin(){
+  var ph = (document.getElementById('lph').value||'').trim();
+  var ps = (document.getElementById('lps').value||'').trim();
+  var err = document.getElementById('login-err');
+  err.textContent='';
+  if(ph.length<7){ err.textContent='Ingresa tu telefono.'; return; }
+  if(!ps){ err.textContent='Ingresa tu contrasena.'; return; }
+  if(ph===ADMIN_PHONE){
+    if(ps!==ADMIN_PASS){ err.textContent='Contrasena incorrecta.'; return; }
+    var s={phone:ADMIN_PHONE,name:ADMIN_NAME,role:'admin'};
+    setSession(s); enterApp(s); return;
   }
-
-  // Usuario normal
-  var users = loadUsers();
-  if (!users[phone]) { err.textContent = 'Numero no registrado. Usa "Registrarme".'; return; }
-  if (users[phone].pass !== pass) { err.textContent = 'Contrasena incorrecta.'; return; }
-  var sess = { phone: phone, name: users[phone].name, role: 'user' };
-  setSession(sess);
-  enterApp(sess);
+  var users=loadUsers();
+  if(!users[ph]){ err.textContent='Numero no registrado. Usa Registrarme.'; return; }
+  if(users[ph].pass!==ps){ err.textContent='Contrasena incorrecta.'; return; }
+  var s={phone:ph,name:users[ph].name,role:'user'};
+  setSession(s); enterApp(s);
 }
 
-// ── REGISTRO ──
-function doRegister() {
-  var name  = (document.getElementById('r-name').value  || '').trim();
-  var phone = (document.getElementById('r-phone').value || '').trim();
-  var pass  = (document.getElementById('r-pass').value  || '').trim();
-  var err   = document.getElementById('login-error');
-  err.textContent = '';
-
-  if (!name)             { err.textContent = 'Ingresa tu nombre.'; return; }
-  if (phone.length < 7)  { err.textContent = 'Ingresa tu telefono.'; return; }
-  if (pass.length < 4)   { err.textContent = 'Contrasena minimo 4 caracteres.'; return; }
-  if (phone === ADMIN_PHONE) { err.textContent = 'Numero no disponible.'; return; }
-
-  var users = loadUsers();
-  if (users[phone]) { err.textContent = 'Ya existe cuenta con ese numero.'; return; }
-
-  users[phone] = { name: name, pass: pass, ts: Date.now() };
+// REGISTRO
+function doRegister(){
+  var n  = (document.getElementById('rn').value||'').trim();
+  var ph = (document.getElementById('rph').value||'').trim();
+  var ps = (document.getElementById('rps').value||'').trim();
+  var err = document.getElementById('login-err');
+  err.textContent='';
+  if(!n){ err.textContent='Ingresa tu nombre.'; return; }
+  if(ph.length<7){ err.textContent='Ingresa tu telefono.'; return; }
+  if(ps.length<4){ err.textContent='Contrasena minimo 4 caracteres.'; return; }
+  if(ph===ADMIN_PHONE){ err.textContent='Numero no disponible.'; return; }
+  var users=loadUsers();
+  if(users[ph]){ err.textContent='Ya existe cuenta con ese numero.'; return; }
+  users[ph]={name:n,pass:ps,ts:new Date().toISOString()};
   saveUsers(users);
-  var sess = { phone: phone, name: name, role: 'user' };
-  setSession(sess);
-  enterApp(sess);
+  var s={phone:ph,name:n,role:'user'};
+  setSession(s); enterApp(s);
 }
 
-// ── ENTRAR APP ──
-function enterApp(sess) {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('hdr-name').textContent = sess.name;
-  document.getElementById('hdr-role').textContent = sess.role === 'admin' ? 'Administrador' : 'Cliente';
-  if (sess.role === 'admin') {
-    document.getElementById('btn-admin').style.display = '';
-  }
+// ENTRAR APP
+function enterApp(s){
+  currentSess=s;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('hdr-name').textContent=s.name;
+  document.getElementById('hdr-role').textContent=s.role==='admin'?'Administrador':'Cliente';
+  if(s.role==='admin') document.getElementById('btn-adm').style.display='';
   renderCatalog();
+  renderPublicReviews();
 }
 
-// ── LOGOUT ──
-function doLogout() {
-  sessionStorage.removeItem('jSess');
-  location.reload();
+// LOGOUT
+function doLogout(){ sessionStorage.removeItem('jpSess'); location.reload(); }
+
+// RENDER CATALOGO
+function renderCatalog(){
+  var html='';
+  CATALOG.forEach(function(sec){
+    html+='<div class="sec-title">'+sec.cat+'</div><div class="grid">';
+    sec.items.forEach(function(it){
+      var waMsg=encodeURIComponent('Hola, me interesa: '+it.name+'. Vi tu catalogo en jerseyspremium.com');
+      var note=it.note?'<div class="card-note">'+it.note+'</div>':'';
+      html+='<div class="card">'+
+        '<div class="card-name">'+it.name+'</div>'+
+        '<div class="card-cat">'+sec.cat+'</div>'+
+        note+
+        '<div class="card-btns">'+
+          '<a class="btn-ver" href="'+it.url+'" target="_blank" rel="noopener">Ver catalogo</a>'+
+          '<a class="btn-wa" href="https://wa.me/'+WA_NUMBER+'?text='+waMsg+'" target="_blank" rel="noopener">&#128172;</a>'+
+          '<button class="btn-review" onclick="openReview(''+it.name.replace(/'/g,'')+'')">&#11088;</button>'+
+        '</div>'+
+      '</div>';
+    });
+    html+='</div>';
+  });
+  document.getElementById('main-content').innerHTML=html;
 }
 
-// ── RENDER CATALOGO ──
-function renderCatalog() {
-  var container = document.getElementById('catalog-content');
-  if (!window.CATALOG_LINKS) {
-    container.innerHTML = '<p style="color:#888;padding:20px">Cargando...</p>';
+// RESENAS PUBLICAS
+function renderPublicReviews(){
+  var reviews=loadReviews();
+  if(reviews.length===0){
+    document.getElementById('public-reviews').innerHTML='<p style="color:#555;font-size:13px;padding:10px 0">Se el primero en dejar una resena.</p>';
     return;
   }
-  var html = '';
-  window.CATALOG_LINKS.forEach(function(section) {
-    html += '<div class="section-title">' + section.category + '</div>';
-    html += '<div class="cards-grid">';
-    section.links.forEach(function(item) {
-      var waMsg = encodeURIComponent('Hola, me interesa ver: ' + item.name);
-      var note = item.note ? '<div class="card-note">Contrasena: ' + item.note + '</div>' : '';
-      html += '<div class="card"><div class="card-body">' +
-        '<div class="card-name">' + item.name + '</div>' +
-        '<div class="card-sub">' + section.category + '</div>' +
-        note +
-        '<div class="card-actions">' +
-        '<a class="btn-ver" href="' + item.url + '" target="_blank" rel="noopener">Ver catalogo</a>' +
-        '<a class="btn-wa" href="https://wa.me/' + WA_NUMBER + '?text=' + waMsg + '" target="_blank" rel="noopener">💬</a>' +
-        '</div></div></div>';
-    });
-    html += '</div>';
-  });
-  container.innerHTML = html;
-}
-
-// ── ADMIN PANEL ──
-function openAdmin() {
-  var users = loadUsers();
-  var keys = Object.keys(users);
-  var html = keys.length === 0
-    ? '<div class="admin-empty">Sin usuarios registrados aun.</div>'
-    : '';
-  keys.forEach(function(phone) {
-    var u = users[phone];
-    html += '<div class="user-row">' +
-      '<div class="user-row-info">' +
-        '<div class="urow-name">' + u.name + '</div>' +
-        '<div class="urow-tel">' + phone + '</div>' +
-      '</div>' +
-      '<button class="btn-del" onclick="deleteUser(\'' + phone + '\')">Eliminar</button>' +
+  var html='';
+  reviews.slice().reverse().forEach(function(r){
+    var stars='';
+    for(var i=1;i<=5;i++) stars+='<span style="color:'+(i<=r.stars?'#f4a261':'#333')+'">&#9733;</span>';
+    html+='<div class="review-card">'+
+      '<div class="rv-name">'+r.name+'</div>'+
+      '<div class="stars">'+stars+'</div>'+
+      (r.product?'<div style="font-size:11px;color:#777;margin-top:2px">'+r.product+'</div>':'')+
+      '<div class="rv-text">'+r.text+'</div>'+
+      '<div class="rv-date">'+r.date+'</div>'+
     '</div>';
   });
-  document.getElementById('admin-users-list').innerHTML = html;
-  document.getElementById('admin-panel').classList.add('show');
-}
-function closeAdmin() {
-  document.getElementById('admin-panel').classList.remove('show');
-}
-function deleteUser(phone) {
-  var users = loadUsers();
-  delete users[phone];
-  saveUsers(users);
-  openAdmin();
+  document.getElementById('public-reviews').innerHTML=html;
 }
 
-// ── AUTO-LOGIN ──
+// MODAL RESENA
+function openReview(prod){
+  currentStar=0;
+  document.getElementById('rv-prod').value=prod||'';
+  document.getElementById('review-text').value='';
+  updateStars();
+  document.getElementById('review-modal').classList.add('show');
+}
+function closeReview(){ document.getElementById('review-modal').classList.remove('show'); }
+function setStar(n){ currentStar=n; updateStars(); }
+function updateStars(){
+  var spans=document.querySelectorAll('#star-pick span');
+  spans.forEach(function(s,i){ s.classList.toggle('on',i<currentStar); });
+}
+function submitReview(){
+  var text=(document.getElementById('review-text').value||'').trim();
+  var prod=(document.getElementById('rv-prod').value||'').trim();
+  if(!text){ alert('Escribe tu resena.'); return; }
+  if(currentStar===0){ alert('Elige una calificacion.'); return; }
+  var reviews=loadReviews();
+  reviews.push({
+    name: currentSess?currentSess.name:'Anonimo',
+    phone: currentSess?currentSess.phone:'',
+    product: prod,
+    text: text,
+    stars: currentStar,
+    date: new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'})
+  });
+  saveReviews(reviews);
+  closeReview();
+  renderPublicReviews();
+  alert('Resena publicada. Gracias!');
+}
+
+// ADMIN PANEL
+function openAdmin(){
+  switchAdminTab('users');
+  document.getElementById('admin-modal').classList.add('show');
+}
+function closeAdmin(){ document.getElementById('admin-modal').classList.remove('show'); }
+function switchAdminTab(tab){
+  ['users','orders','reviews'].forEach(function(t){
+    document.getElementById('at-'+t).classList.toggle('active',t===tab);
+    document.querySelectorAll('.atab').forEach(function(b,i){
+      b.classList.toggle('active',['users','orders','reviews'][i]===tab);
+    });
+  });
+  if(tab==='users') renderAdminUsers();
+  if(tab==='orders') renderAdminOrders();
+  if(tab==='reviews') renderAdminReviews();
+}
+
+function renderAdminUsers(){
+  var users=loadUsers();
+  var keys=Object.keys(users);
+  if(keys.length===0){ document.getElementById('at-users').innerHTML='<div class="empty-msg">Sin usuarios registrados.</div>'; return; }
+  var html='<div style="font-size:12px;color:#666;margin-bottom:12px">'+keys.length+' usuarios registrados</div>';
+  keys.forEach(function(ph){
+    var u=users[ph];
+    var fecha=u.ts?new Date(u.ts).toLocaleDateString('es-MX',{year:'numeric',month:'short',day:'numeric'}):'';
+    html+='<div class="a-row">'+
+      '<div class="a-row-info">'+
+        '<div class="an">'+u.name+'</div>'+
+        '<div class="as">Tel: '+ph+' | Registro: '+fecha+'</div>'+
+        '<div class="ap">Pass: '+u.pass+'</div>'+
+      '</div>'+
+      '<button class="btn-del" onclick="deleteUser(''+ph+'')">Eliminar</button>'+
+    '</div>';
+  });
+  document.getElementById('at-users').innerHTML=html;
+}
+
+function deleteUser(ph){
+  if(!confirm('Eliminar usuario '+ph+'?')) return;
+  var users=loadUsers(); delete users[ph]; saveUsers(users); renderAdminUsers();
+}
+
+function renderAdminOrders(){
+  var orders=loadOrders();
+  if(orders.length===0){ document.getElementById('at-orders').innerHTML='<div class="empty-msg">Sin pedidos aun.</div>'; return; }
+  var html='<div style="font-size:12px;color:#666;margin-bottom:12px">'+orders.length+' pedidos</div>';
+  orders.slice().reverse().forEach(function(o,i){
+    html+='<div class="order-item">'+
+      '<div class="oi-prod">'+o.product+'</div>'+
+      '<div class="oi-user">Cliente: '+o.name+' | '+o.phone+'</div>'+
+      (o.msg?'<div class="oi-msg">'+o.msg+'</div>':'')+
+      '<div class="oi-date">'+o.date+'</div>'+
+    '</div>';
+  });
+  document.getElementById('at-orders').innerHTML=html;
+}
+
+function renderAdminReviews(){
+  var reviews=loadReviews();
+  if(reviews.length===0){ document.getElementById('at-reviews').innerHTML='<div class="empty-msg">Sin resenas aun.</div>'; return; }
+  var html='<div style="font-size:12px;color:#666;margin-bottom:12px">'+reviews.length+' resenas</div>';
+  reviews.slice().reverse().forEach(function(r){
+    var stars='';
+    for(var i=1;i<=5;i++) stars+='<span style="color:'+(i<=r.stars?'#f4a261':'#333')+'">&#9733;</span>';
+    html+='<div class="rv-admin">'+
+      '<div class="ra-user">'+r.name+' ('+r.phone+')</div>'+
+      '<div>'+stars+'</div>'+
+      (r.product?'<div class="ra-prod">Producto: '+r.product+'</div>':'')+
+      '<div class="ra-text">'+r.text+'</div>'+
+      '<div class="ra-date">'+r.date+'</div>'+
+      '<button class="btn-del" onclick="deleteReview('+reviews.indexOf(r)+')">Eliminar</button>'+
+    '</div>';
+  });
+  document.getElementById('at-reviews').innerHTML=html;
+}
+
+function deleteReview(idx){
+  var reviews=loadReviews(); reviews.splice(idx,1); saveReviews(reviews); renderAdminReviews(); renderPublicReviews();
+}
+
+// AUTO-LOGIN
 (function(){
-  var sess = getSession();
-  if (sess && sess.phone) { enterApp(sess); }
+  var s=getSession();
+  if(s&&s.phone){ enterApp(s); }
 })();
 </script>
 </body>
