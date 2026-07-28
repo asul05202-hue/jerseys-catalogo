@@ -465,67 +465,56 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
     <!-- SIGNIN -->
     <div id="panel-signin">
-      <div class="login-form-wrap">
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" id="si-phone" placeholder="10 dígitos" autocomplete="tel"/>
+      <form onsubmit="doSignin();return false;" autocomplete="on">
+        <div class="login-form-wrap">
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" id="si-phone" name="phone" placeholder="10 dígitos" autocomplete="tel"/>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="si-pass" name="password" placeholder="Tu contraseña" autocomplete="current-password"/>
+          </div>
+          <div class="login-error" id="si-error"></div>
+          <div style="margin-top:16px">
+            <button type="submit" class="login-btn">Iniciar sesión →</button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="si-pass" placeholder="Tu contraseña"/>
-        </div>
-        <div class="login-error" id="si-error"></div>
-        <div style="margin-top:16px">
-          <button type="button" class="login-btn" id="btn-signin">Iniciar sesión →</button>
-        </div>
-      </div>
+      </form>
       <div style="margin-top:14px;text-align:center">
-        <a href="#" id="link-reset" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
+        <a href="#" onclick="resetMyAccount();return false;" style="color:rgba(255,255,255,.3);font-size:11px;text-decoration:none">¿Olvidaste tu contraseña? Restablecer cuenta</a>
       </div>
     </div>
-    <script>
-    // Registrar listeners inmediatamente — el boton ya existe en el DOM aqui
-    (function(){
-      function ready(fn){ if(document.readyState!=='loading'){fn();}else{document.addEventListener('DOMContentLoaded',fn);} }
-      ready(function(){
-        var b = document.getElementById('btn-signin');
-        var r2 = document.getElementById('btn-register');
-        var lr = document.getElementById('link-reset');
-        if(b) b.addEventListener('click', function(){ doSignin && doSignin(); });
-        if(r2) r2.addEventListener('click', function(){ doRegister && doRegister(); });
-        if(lr) lr.addEventListener('click', function(e){ e.preventDefault(); resetMyAccount && resetMyAccount(); });
-        var sp = document.getElementById('si-pass');
-        var sph = document.getElementById('si-phone');
-        if(sp) sp.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin && doSignin(); });
-        if(sph) sph.addEventListener('keydown', function(e){ if(e.key==='Enter') doSignin && doSignin(); });
-      });
-    })();
-    </script>
     <!-- REGISTER -->
     <div id="panel-register" style="display:none">
-      <div class="login-form-wrap">
-        <div class="form-group">
-          <label>Nombre completo</label>
-          <input type="text" id="reg-name" placeholder="Tu nombre" autocomplete="name"/>
+      <form onsubmit="doRegister();return false;" autocomplete="on">
+        <div class="login-form-wrap">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" id="reg-name" name="name" placeholder="Tu nombre" autocomplete="name"/>
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" id="reg-phone" name="phone" placeholder="10 dígitos" autocomplete="tel"/>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="reg-pass" name="password" placeholder="Mínimo 4 caracteres" autocomplete="new-password"/>
+          </div>
+          <div class="form-group">
+            <label>Confirmar contraseña</label>
+            <input type="password" id="reg-pass2" name="password2" placeholder="Repite tu contraseña" autocomplete="new-password"/>
+          </div>
+          <div class="login-error" id="reg-error"></div>
+          <div style="margin-top:16px">
+            <button type="submit" class="login-btn">Crear cuenta →</button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" id="reg-phone" placeholder="10 dígitos" autocomplete="tel"/>
-        </div>
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="reg-pass" placeholder="Mínimo 4 caracteres"/>
-        </div>
-        <div class="form-group">
-          <label>Confirmar contraseña</label>
-          <input type="password" id="reg-pass2" placeholder="Repite tu contraseña"/>
-        </div>
-        <div class="login-error" id="reg-error"></div>
-        <div style="margin-top:16px">
-          <button type="button" class="login-btn" id="btn-register">Crear cuenta →</button>
-        </div>
-      </div>
+      </form>
     </div>
+  </div>
+</div>
+
   </div>
 </div>
 
