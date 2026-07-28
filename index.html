@@ -2110,9 +2110,19 @@ document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if
 <script src="catalog.js"></script>
 
 <script>
-// Este bloque corre DESPUES de catalog.js — initApp ya esta definida
+// CATALOG_SEED ya esta listo — llamar initApp siempre
 (function(){
-  // Si habia sesion guardada, saltar login
+  // Inicializar productos (requiere CATALOG_SEED de catalog.js)
+  if (typeof initApp === 'function') {
+    try { initApp(); } catch(e) { console.error('initApp error:', e); }
+  }
+
+  // Si el usuario hizo login manual, el app ya es visible — nada mas que hacer
+  if (document.getElementById('app').classList.contains('visible')) {
+    return;
+  }
+
+  // Si habia sesion guardada en localStorage, restaurarla
   var s = localStorage.getItem('jersey_session');
   if (s) {
     try {
@@ -2127,13 +2137,12 @@ document.getElementById('reg-pass2').addEventListener('keydown', function(e){ if
       if (ok) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app').classList.add('visible');
-        if (typeof initApp === 'function') { try { initApp(); } catch(e) { console.error('initApp:', e); } }
-        if (typeof window.onUserLoggedIn === 'function') window.onUserLoggedIn(u);
         return;
       }
     } catch(e) {}
     localStorage.removeItem('jersey_session');
   }
+  // Si no hay sesion: dejar el login visible (ya lo esta por defecto)
 })();
 </script>
 </body>
