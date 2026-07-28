@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="catalog.js"></script>
+<script>
+function handleClick() {
+  var n = window.CATALOG_SEED ? window.CATALOG_SEED.length : 'NO_SEED';
+  document.getElementById('out').textContent = 'FUNCIONA! Productos: ' + n;
+  console.log('click OK, productos:', n);
+}
+window.addEventListener('load', function() {
+  document.getElementById('out').textContent = 'listo';
+  console.log('load ok, seed:', window.CATALOG_SEED ? window.CATALOG_SEED.length : 'missing');
+});
+</script>
+</head>
+<body style="background:#1a1a2e;color:#fff;padding:40px">
+<input id="p" type="text" value="3343745531" style="padding:10px;margin:10px;display:block">
+<input id="s" type="password" value="125670Carlos" style="padding:10px;margin:10px;display:block">
+<button id="btn" type="button" onclick="handleClick()" style="padding:20px;background:red;color:#fff;font-size:18px;cursor:pointer;border:none;border-radius:8px">ENTRAR</button>
+<div id="out" style="margin-top:20px;font-size:20px">esperando...</div>
+</body>
+</html>
