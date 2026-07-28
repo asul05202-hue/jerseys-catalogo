@@ -893,7 +893,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 // Listeners de login via addEventListener (Enter en inputs)
+console.log('[SCRIPT-MAIN] inicio del script principal');
 window.addEventListener('load', function(){
+  console.log('[LOAD] window load fired');
   try{ initApp(); }catch(e){ console.error('initApp error:',e); }
   var savedName = localStorage.getItem('jersey_site_name');
   if (savedName) applySiteName(savedName);
@@ -2035,6 +2037,7 @@ function deleteAllReviews() {
 <script src="catalog.js"></script>
 
 <script>
+console.log('[POST-CATALOG] bloque post-catalog corriendo');
 // Este bloque corre cuando catalog.js ya está listo (CATALOG_SEED disponible)
 (function(){
   // 1. Siempre inicializar los productos
